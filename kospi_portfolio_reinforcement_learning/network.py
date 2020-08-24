@@ -7,6 +7,7 @@ Created on Wed Aug 19 21:20:16 2020
 import tensorflow as tf
 import tensorflow.contrib.layers as layer
 import numpy as np
+from collections import deque
 
 class policy:
     def __init__(self, sess, num_of_feature,filter_size ,day_length, num_of_asset, memory_size,learning_rate = 1e-4, name='EIIE'):
@@ -43,10 +44,21 @@ class policy:
         self.train = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
         
     def predict(self, s, memory):
+        self.tensor = self.normalize_tensor
         self.weight=self.sess.run(self.policy, {self._X: s,self._M: memory})
         return self.weight
         
     def update(self, s, y, r, memory):
         self.sess.run([self.loss,self.train], {self._X: s, self._Y: y, self._r: r, self._M: memory})
-
-
+        
+    def normalize_tensor(self,s):
+        self.v_tensor = deque()
+        for j in range(self.num_of_feature):
+            self.v_vector = deque()
+            for i in range(self.input_size):
+                self.v_vector.append(s[j,:,i]/s[j,:,-1])
+            self.v_vector = np.array(self.v_vector)
+            self.v_tensor.append(self.v_vector)
+        self.v_tensor = np.array(self.v_tensor)
+        return self.v_tensor
+        

@@ -12,9 +12,13 @@ class env:
     def __init__(self, path_data='./preprocess/price.npy', day_length=50):
         self.day_len = day_length
         self.env_array = np.load(path_data, allow_pickle=True)
+    
+    def start(self):
         self.time = 0
         self.done = False
-        
+        self.state = self.env_array[:, :, self.time : self.time + self.day_len]
+        return self.state
+    
     def action(self,weight):
         self.state = self.env_array[:, :, self.time : self.time + self.day_len]
         self.time = self.time + 1
