@@ -48,8 +48,14 @@ class policy:
         self.weight=self.sess.run(self.policy, {self._X: s,self._M: memory})
         return self.weight
         
-    def update(self, s, y, r, memory):
-        self.sess.run([self.loss,self.train], {self._X: s, self._Y: y, self._r: r, self._M: memory})
+    def update(self, episode_memory):
+        episode_memory = np.array(episode_memory)
+        s = episode_memory[:,0]
+        w = episode_memory[:,1]
+        r = episode_memory[:,2]        
+        discounted_r = self.discounting_reward(r)
+        memory = episode_memory[:,3]
+        self.sess.run([self.loss,self.train], {self._X: s, self._Y: w, self._r: discounted_r, self._M: memory})
         
     def normalize_tensor(self,s):
         self.v_tensor = deque()
@@ -61,4 +67,12 @@ class policy:
             self.v_tensor.append(self.v_vector)
         self.v_tensor = np.array(self.v_tensor)
         return self.v_tensor
+    
+    def discounting_reward(self,r):
+        discounted_r = np.zeors_like(r,dtype = np.float32)
+        running_add = 0
+        for t in reversed(range(len(r))):
+            running_add = running_add *0.98 +r[t]
+            discounted_r[t] = running_add
+        return discounted_r
         

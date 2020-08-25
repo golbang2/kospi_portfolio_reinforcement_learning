@@ -12,17 +12,17 @@ import numpy as np
 import pandas as pd
 from collections import deque
 
-ksp50 = np.loadtxt('./data/kospi60.csv', delimiter=',',dtype = str)
+read_csv_file = 'KOSPI200.csv'
+
+ksp_list = np.loadtxt('./data/'+read_csv_file, delimiter=',',dtype = str)
 price_data_list = []
 
-for i in range(len(ksp50)):
+for i in range(len(ksp_list)):
     try:
-        price_data_list.append(pd.read_csv("./data/stock_price/"+ksp50[i]+".csv"))
-        print(ksp50[i]+' load')
+        price_data_list.append(pd.read_csv("./data/stock_price/"+ksp_list[i]+".csv"))
+        print(ksp_list[i]+' load')
     except:
-        print(ksp50[i]+' pass')
-    if len(price_data_list)==number_of_asset:
-        break
+        print(ksp_list[i]+' pass')
 
 feature_deque = deque()
 for j in range(2,number_of_feature+2):
@@ -33,13 +33,4 @@ for j in range(2,number_of_feature+2):
 
 feature_3d_array = np.array(feature_deque,dtype=np.float32)
 
-np.save('./preprocess/price.npy',feature_3d_array,allow_pickle=True)
-
-v_tensor = deque()
-for j in range(feature_3d_array.shape[0]):
-    v_matrix = deque()
-    for i in range(feature_3d_array.shape[2]-1):
-        v_matrix.append(feature_3d_array[j,:,i+1]/feature_3d_array[j,:,i])
-    v_tensor.append(v_matrix)
-    
-v_tensor = np.array(v_tensor,dtype=np.float32)
+np.save('./preprocess/price_tensor.npy',feature_3d_array,allow_pickle=True)
