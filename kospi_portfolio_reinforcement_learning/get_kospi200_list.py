@@ -13,6 +13,7 @@ import re
 import requests
 
 BaseUrl='http://finance.naver.com/sise/entryJongmok.nhn?&page='
+kospi_list = []
 
 for i in range(1,22,1):
     url=BaseUrl+str(i)
@@ -27,6 +28,7 @@ for i in range(1,22,1):
             code = k.group()
             name=item.text
             data = code,name
-            with open('KOSPI200.csv','a') as f:
+            kospi_list.append(data)
+            with open('./data/KOSPI200.csv','a') as f:
                 writer = csv.writer(f)
                 writer.writerow(data)

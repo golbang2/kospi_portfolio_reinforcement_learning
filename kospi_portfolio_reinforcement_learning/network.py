@@ -10,25 +10,26 @@ import numpy as np
 from collections import deque
 
 class policy:
-    def __init__(self, sess, num_of_feature,filter_size ,day_length, num_of_asset, memory_size,learning_rate = 1e-4, name='EIIE'):
+    def __init__(self, sess, num_of_feature, day_length, num_of_asset, memory_size=20 , filter_size = 3, learning_rate = 1e-4, name='EIIE'):
         self.sess = sess
         self.input_size=day_length
         self.output_size=num_of_asset
         self.net_name=name
         self.memory_size = memory_size
         self.num_of_feature = num_of_feature
-        self.filter_size
+        self.filter_size = filter_size
         
         self._X=tf.placeholder(tf.float32,[None,self.num_of_feature,self.input_size,self.output_size,1],name="s")
         self._M=tf.placeholder(tf.float32,[None,self.memory_size,self.output_size,1],name='M')
         self._Y=tf.placeholder(tf.float32,[None,self.output_size],name='y')
         self._r=tf.placeholder(tf.float32, name='reward')
         
-        self.conv1 = layer.convolution3d(activation_fn=tf.nn.relu, inputs=self._X, num_outputs=2, kernel_size=[4, filter_size, 1], stride = 1)
-        self.conv2 = layer.convolution3d(activation_fn=tf.nn.relu, inputs=self.conv1, num_outputs=1, 
-                                         kernel_size=[2, self.input_size-filter_size+1, 1]   , stride = 1)
+        self.conv1 = layer.convolution3d(activation_fn=tf.nn.relu, inputs=self._X,num_outputs=2,kernel_size=[num_of_feature,filter_size,1],stride=1)
+        self.conv2 = layer.convolution3d(activation_fn=tf.nn.relu, inputs=self.conv1,num_outputs=1,kernel_size=[2,self.input_size-filter_size+1,1],stride=1)
         
-        self.expanded_asset = tf.expand_dims(self.conv3,axis=-1)
+        self.conv2.shape
+        
+        self.expanded_asset = tf.expand_dims(self.conv2,axis=-1)
         self.feature_map = tf.concat([self.expanded_asset,self._M],axis=0)
         
         self.cash_bias = tf.Variable([[1]],dtype=tf.float32)

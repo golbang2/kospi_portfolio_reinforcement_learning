@@ -24,7 +24,7 @@ input_day_size = 50
 filter_size = 3
 num_of_feature = asset_data.shape[0]
 num_of_asset = asset_data.shape[1]
-num_episodes = 20000
+num_episodes = 20
 
 #saving
 save_frequency = 100
@@ -37,7 +37,7 @@ config = tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
 
 with tf.Session(config=config) as sess:
-    agent=network.policy(sess,num_of_feature,filter_size ,input_day_size, num_of_asset, memory_size,learning_rate = 1e-4, name='EIIE')
+    agent=network.policy(sess,num_of_feature,input_day_size,num_of_asset,memory_size,filter_size,learning_rate = 1e-4,name='EIIE')
     agent.sess.run(tf.global_variables_initializer())
     
     if save_model:
