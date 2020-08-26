@@ -12,25 +12,25 @@ import numpy as np
 import pandas as pd
 from collections import deque
 
+#load kospi200 list
 read_csv_file = 'KOSPI200.csv'
-
 ksp_list = np.loadtxt('./data/'+read_csv_file, delimiter=',',dtype = str)
 price_data_list = []
 
+#target data
 for i in range(len(ksp_list)):
     try:
-        price_data_list.append(pd.read_csv("./data/stock_price/"+ksp_list[i]+".csv"))
-        print(ksp_list[i]+' load')
+        price_data_list.append(pd.read_csv("./data/stock_price/"+ksp_list[i,0]+".csv"))
+        print(ksp_list[i,0]+' load')
     except:
-        print(ksp_list[i]+' pass')
+        print(ksp_list[i,0]+' pass')
 
-feature_deque = deque()
-for j in range(2,number_of_feature+2):
-    price_deque = deque()
-    for i in range(number_of_asset):
-        price_deque.append(price_data_list[i].to_numpy()[:,j])
-    feature_deque.append(price_deque)
+#extract feature from data
+price_deque=deque()
+for i in range(number_of_asset):
+    price_deque.append(price_data_list[i].to_numpy()[:,2:6][::-1])
 
-feature_3d_array = np.array(feature_deque,dtype=np.float32)
+#NHWC shape: (?,number_of_asset,length,feature)
+feature_tensor = np.array(price_deque,dtype=np.float32)
 
-np.save('./preprocess/price_tensor.npy',feature_3d_array,allow_pickle=True)
+np.save('./preprocess/price_tensor.npy',feature_tensor,allow_pickle=True)

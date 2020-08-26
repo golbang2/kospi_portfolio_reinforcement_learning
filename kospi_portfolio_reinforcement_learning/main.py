@@ -51,7 +51,7 @@ with tf.Session(config=config) as sess:
         s=env.start()
         done=False
         score=0
-        m = np.zeros([memory_size,num_of_asset,1],dtype = np.float32)
+        m = np.zeros([num_of_asset,1,memory_size], dtype = np.float32)
         while not done:
             w = agent.predict(s)
             s_prime,r,done = env.action(w)

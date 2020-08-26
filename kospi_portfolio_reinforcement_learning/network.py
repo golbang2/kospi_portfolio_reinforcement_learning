@@ -24,10 +24,8 @@ class policy:
         self._Y=tf.placeholder(tf.float32,[None,self.output_size],name='y')
         self._r=tf.placeholder(tf.float32, name='reward')
         
-        self.conv1 = layer.convolution3d(activation_fn=tf.nn.relu, inputs=self._X,num_outputs=2,kernel_size=[num_of_feature,filter_size,1],stride=1)
-        self.conv2 = layer.convolution3d(activation_fn=tf.nn.relu, inputs=self.conv1,num_outputs=1,kernel_size=[2,self.input_size-filter_size+1,1],stride=1)
-        
-        self.conv2.shape
+        self.conv1 = layer.conv2d(self._X, 2, [1,self.filter_size], padding='VALID',activation_fn = tf.nn.relu)
+        self.conv2 = layer.conv2d(self.conv1, 1, [1,self.input_size-self.filter_size+1], padding='VALID',activation_fn = tf.nn.relu)
         
         self.expanded_asset = tf.expand_dims(self.conv2,axis=-1)
         self.feature_map = tf.concat([self.expanded_asset,self._M],axis=0)
@@ -45,8 +43,10 @@ class policy:
         self.train = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
         
     def predict(self, s, memory):
-        self.tensor = self.normalize_tensor
-        self.weight=self.sess.run(self.policy, {self._X: s,self._M: memory})
+        tensor = self.normalize_tensor(s)
+        tensor = np.expand_dims(tensor,axis=0)
+        memory = np.expand_dims(memory,axis-0)
+        self.weight=self.sess.run(self.policy, {self._X: self.tensor ,self._M: memory})
         return self.weight
         
     def update(self, episode_memory):
