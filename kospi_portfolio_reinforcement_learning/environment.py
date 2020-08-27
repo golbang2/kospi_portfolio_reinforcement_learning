@@ -25,7 +25,7 @@ class env:
         self.state_prime = self.env_array[:, self.time : self.time + self.day_len,:]
         self.y = self.state_prime[:,-1,0]/self.state[:,-1,0]
         self.r = np.sum(np.log(self.y)*weight)
-        if self.time == self.state.shape[2]-self.day_len:
+        if self.time == self.env_array.shape[1]-self.day_len:
             self.done = True
         return self.state_prime, self.r, self.done
     

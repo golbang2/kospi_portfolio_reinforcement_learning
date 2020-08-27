@@ -19,23 +19,23 @@ class policy:
         self.num_of_feature = num_of_feature
         self.filter_size = filter_size
         
-        self._X=tf.placeholder(tf.float32,[None,self.num_of_feature,self.input_size,self.output_size,1],name="s")
-        self._M=tf.placeholder(tf.float32,[None,self.memory_size,self.output_size,1],name='M')
-        self._Y=tf.placeholder(tf.float32,[None,self.output_size],name='y')
-        self._r=tf.placeholder(tf.float32, name='reward')
+        self._X=tf.placeholder(tf.float32,[None,self.output_size,self.input_size,self.num_of_feature],name="s")
+        self._M=tf.placeholder(tf.float32,[None,self.output_size,1,self.memory_size],name='M')
+        self._Y=tf.placeholder(tf.float32,[None,self.output_size+1],name='y')
+        self._r=tf.placeholder(tf.float32, name='r')
         
         self.conv1 = layer.conv2d(self._X, 2, [1,self.filter_size], padding='VALID',activation_fn = tf.nn.relu)
         self.conv2 = layer.conv2d(self.conv1, 1, [1,self.input_size-self.filter_size+1], padding='VALID',activation_fn = tf.nn.relu)
         
-        self.expanded_asset = tf.expand_dims(self.conv2,axis=-1)
-        self.feature_map = tf.concat([self.expanded_asset,self._M],axis=0)
+        self.feature_map = tf.concat([self.conv2,self._M],axis=3)
         
-        self.cash_bias = tf.Variable([[1]],dtype=tf.float32)
-        self.concat_cash = tf.concat([self.feature_map, self.cash_bias],axis=1)
+        self.conv3 = layer.conv2d(self.feature_map, 1, [1,1], padding='VALID')
         
-        self.conv3 = layer.convolution3d(activation_fn=None, inputs = self.concat_cash, num_output=1,kernel_size = [memory_size+1, 1, 1], stride = 1)
-        
-        self.policy=tf.nn.softmax(self.policy_layer2)
+        self._B = tf.placeholder(tf.float32,[None,1,1,1],name='c')
+        #self._B = tf.Variable([[[[1]]]],dtype=tf.float32)
+        self.concat_cash = tf.concat([self.conv3, self._B],axis=1)
+                
+        self.policy=tf.nn.softmax(self.concat_cash,dim=1)
         
         self.log_p = self._Y * tf.log(tf.clip_by_value(self.policy,1e-10,1.))
         self.loss = -tf.reduce_mean(tf.reduce_sum(self.log_p, axis=1))
@@ -43,37 +43,28 @@ class policy:
         self.train = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
         
     def predict(self, s, memory):
-        tensor = self.normalize_tensor(s)
-        tensor = np.expand_dims(tensor,axis=0)
-        memory = np.expand_dims(memory,axis-0)
-        self.weight=self.sess.run(self.policy, {self._X: self.tensor ,self._M: memory})
+        s = np.expand_dims(s,axis=0)
+        memory = np.expand_dims(memory,axis=0)
+        c = np.ones((1,1,1,1))
+        self.weight=self.sess.run(self.policy, {self._X: s ,self._M: memory, self._B: c})
         return self.weight
         
     def update(self, episode_memory):
         episode_memory = np.array(episode_memory)
-        s = episode_memory[:,0]
-        w = episode_memory[:,1]
-        r = episode_memory[:,2]        
+        s = np.array(episode_memory[:,0].tolist())
+        w = np.array(episode_memory[:,1].tolist())[:,0,:,0,0]
+        r = np.array(episode_memory[:,2].tolist())        
         discounted_r = self.discounting_reward(r)
-        memory = episode_memory[:,3]
-        self.sess.run([self.loss,self.train], {self._X: s, self._Y: w, self._r: discounted_r, self._M: memory})
-        
-    def normalize_tensor(self,s):
-        self.v_tensor = deque()
-        for j in range(self.num_of_feature):
-            self.v_vector = deque()
-            for i in range(self.input_size):
-                self.v_vector.append(s[j,:,i]/s[j,:,-1])
-            self.v_vector = np.array(self.v_vector)
-            self.v_tensor.append(self.v_vector)
-        self.v_tensor = np.array(self.v_tensor)
-        return self.v_tensor
+        memory = np.array(episode_memory[:,3].tolist())
+        c = np.ones((len(episode_memory),1,1,1),dtype=np.float32)
+        self.sess.run([self.loss,self.train], {self._X: s, self._Y: w, self._r: discounted_r, self._M: memory,self._B: c})
     
     def discounting_reward(self,r):
-        discounted_r = np.zeors_like(r,dtype = np.float32)
+        discounted_r = np.zeros_like(r,dtype = np.float32)
         running_add = 0
         for t in reversed(range(len(r))):
             running_add = running_add *0.98 +r[t]
             discounted_r[t] = running_add
         return discounted_r
+        
         
