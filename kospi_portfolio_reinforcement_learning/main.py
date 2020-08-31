@@ -37,7 +37,7 @@ def MM_scaler(s):
     
 
 #preprocessed data loading
-is_train = 'train'
+is_train = 'test'
 path_data = './preprocess/'+is_train+'_price_tensor.npy'
 asset_data = np.load(path_data, allow_pickle=True)
 
@@ -48,14 +48,17 @@ input_day_size = 50
 filter_size = 3
 num_of_feature = asset_data.shape[2]
 num_of_asset = asset_data.shape[0]
-num_episodes = 3001
+num_episodes = 30000 if is_train =='train' else 1
 
 #saving
 save_frequency = 100
 save_path = './algorithms'
 save_model = 1
-load_model = 0
-env = environment.env()
+load_model = 1
+if is_train=='test':
+    env = environment.env(train = False)
+else:
+    env = environment.env()
 
 config = tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
@@ -84,9 +87,10 @@ with tf.Session(config=config) as sess:
             m=memory_queue(m,w)
             s = s_prime
             if done:
-                agent.update(episode_memory)
                 print(i,value)
+                if is_train =='train':
+                    agent.update(episode_memory)
                 
-        if save_model ==1 and i%save_frequency == 99:
+        if save_model == 1 and i % save_frequency == save_frequency - 1:
             saver.save(sess,save_path+'/model-'+str(i)+'.cptk')
             print('saved')
