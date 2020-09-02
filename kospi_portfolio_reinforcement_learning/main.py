@@ -18,6 +18,17 @@ def memory_queue(memory,weight):
     memory = np.concatenate((weight,memory),axis=2)[:,:,:-1]
     return memory
 
+def normalize_tensor(s):
+    v_tensor = deque()
+    for j in range(num_of_asset):
+        v_array = deque()
+        for i in range(input_day_size):
+            v_array.append(s[j,i]/s[j,-1])
+        v_array = np.array(v_array)
+        v_tensor.append(v_array)
+    v_tensor = np.array(v_tensor)
+    return v_tensor
+
 def MM_scaler(s):
     x= np.zeros(s.shape)
     for i in range(len(s)):
@@ -37,17 +48,27 @@ input_day_size = 50
 filter_size = 3
 num_of_feature = asset_data.shape[2]
 num_of_asset = asset_data.shape[0]
+<<<<<<< HEAD
 num_episodes = 30 if is_train =='train' else 1
+=======
+num_episodes = 3001
+>>>>>>> parent of ef817be... test
 
 #saving
 save_frequency = 100
 save_path = './algorithms'
+<<<<<<< HEAD
 save_model = 0
-load_model = 0
+load_model = 1
 if is_train=='test':
     env = environment.env(train = False)
 else:
     env = environment.env()
+=======
+save_model = 1
+load_model = 0
+env = environment.env()
+>>>>>>> parent of ef817be... test
 
 config = tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
@@ -67,7 +88,7 @@ with tf.Session(config=config) as sess:
         s=env.start()
         s=MM_scaler(s)
         done=False
-        m = np.ones([10,1,20],dtype=np.float32)/10
+        m = np.zeros([10,1,20],dtype=np.float32)/10
         while not done:
             w= agent.predict(s,m)
             s_prime,r,done,value = env.action(w)
@@ -76,10 +97,14 @@ with tf.Session(config=config) as sess:
             m=memory_queue(m,w)
             s = s_prime
             if done:
+                agent.update(episode_memory)
                 print(i,value)
+<<<<<<< HEAD
                 if is_train =='train':
                     agent.update()
+=======
+>>>>>>> parent of ef817be... test
                 
-        if save_model == 1 and i % save_frequency == save_frequency - 1:
+        if save_model ==1 and i%save_frequency == 99:
             saver.save(sess,save_path+'/model-'+str(i)+'.cptk')
             print('saved')

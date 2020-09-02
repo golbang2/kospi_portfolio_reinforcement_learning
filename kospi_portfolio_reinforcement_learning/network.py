@@ -60,3 +60,5 @@ class policy:
         self.state_deque.append(s)
         self.memory_deque.append(m)
         self.reward_deque.append(r)
+    
+        
