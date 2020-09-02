@@ -30,10 +30,9 @@ class env:
         self.state_prime = self.env_array[:, self.time : self.time + self.day_len,:]
         self.y = self.state_prime[:,-1,0]/self.state[:,-1,0]
         self.value = self.value*np.sum(weight*self.y)
-        self.r = (np.sum(weight*self.y)-1)*100
-        self.r = np.stack((self.r,)*self.state.shape[0],axis=-1)
+        self.r = np.expand_dims((self.y-1)*100,axis=0)
         if self.time == self.env_array.shape[1]-self.day_len:
             self.done = True
         return self.state_prime, self.r, self.done, self.value
-
+    
 w = np.array([0.2,0.1,0.05,0.1,0.05,0.3,0.03,0.02,0.05,0.1])
