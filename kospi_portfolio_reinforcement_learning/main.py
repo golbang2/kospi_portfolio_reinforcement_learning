@@ -48,14 +48,11 @@ input_day_size = 50
 filter_size = 3
 num_of_feature = asset_data.shape[2]
 num_of_asset = asset_data.shape[0]
-num_episodes = 30 if is_train =='train' else 1
 num_episodes = 3001
 
 #saving
 save_frequency = 100
 save_path = './algorithms'
-save_model = 0
-load_model = 1
 if is_train=='test':
     env = environment.env(train = False)
 else:
