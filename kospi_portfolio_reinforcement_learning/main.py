@@ -48,27 +48,21 @@ input_day_size = 50
 filter_size = 3
 num_of_feature = asset_data.shape[2]
 num_of_asset = asset_data.shape[0]
-<<<<<<< HEAD
 num_episodes = 30 if is_train =='train' else 1
-=======
 num_episodes = 3001
->>>>>>> parent of ef817be... test
 
 #saving
 save_frequency = 100
 save_path = './algorithms'
-<<<<<<< HEAD
 save_model = 0
 load_model = 1
 if is_train=='test':
     env = environment.env(train = False)
 else:
     env = environment.env()
-=======
 save_model = 1
 load_model = 0
 env = environment.env()
->>>>>>> parent of ef817be... test
 
 config = tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
@@ -99,12 +93,8 @@ with tf.Session(config=config) as sess:
             if done:
                 agent.update(episode_memory)
                 print(i,value)
-<<<<<<< HEAD
                 if is_train =='train':
                     agent.update()
-=======
->>>>>>> parent of ef817be... test
-                
         if save_model ==1 and i%save_frequency == 99:
             saver.save(sess,save_path+'/model-'+str(i)+'.cptk')
             print('saved')
