@@ -37,7 +37,7 @@ def MM_scaler(s):
     
 
 #preprocessed data loading
-is_train = 'test'
+is_train = 'train'
 path_data = './preprocess/'+is_train+'_price_tensor.npy'
 asset_data = np.load(path_data, allow_pickle=True)
 
@@ -48,12 +48,12 @@ input_day_size = 50
 filter_size = 3
 num_of_feature = asset_data.shape[2]
 num_of_asset = asset_data.shape[0]
-num_episodes = 30000 if is_train =='train' else 1
+num_episodes = 30 if is_train =='train' else 1
 
 #saving
 save_frequency = 100
 save_path = './algorithms'
-save_model = 1
+save_model = 0
 load_model = 1
 if is_train=='test':
     env = environment.env(train = False)
@@ -72,24 +72,24 @@ with tf.Session(config=config) as sess:
         ckpt = tf.train.get_checkpoint_state(save_path)
         if load_model:
             saver.restore(sess,ckpt.model_checkpoint_path)
-    
+
     for i in range(num_episodes):
-        episode_memory = deque()
+        episode_memory = []
         s=env.start()
         s=MM_scaler(s)
         done=False
-        m = np.zeros([10,1,20],dtype=np.float32)
+        m = np.zeros([10,1,20],dtype=np.float32)/10
         while not done:
             w= agent.predict(s,m)
             s_prime,r,done,value = env.action(w)
             s_prime=MM_scaler(s_prime)
-            episode_memory.append([s,r,m])
+            agent.buffer(s,r,m)
             m=memory_queue(m,w)
             s = s_prime
             if done:
                 print(i,value)
                 if is_train =='train':
-                    agent.update(episode_memory)
+                    agent.update()
                 
         if save_model == 1 and i % save_frequency == save_frequency - 1:
             saver.save(sess,save_path+'/model-'+str(i)+'.cptk')
