@@ -18,6 +18,9 @@ class policy:
         self.memory_size = memory_size
         self.num_of_feature = num_of_feature
         self.filter_size = filter_size
+        self.state_deque = deque()
+        self.memory_deque = deque()
+        self.reward_deque = deque()
         
         self._X=tf.placeholder(tf.float32,[None,self.output_size,self.input_size,self.num_of_feature],name="s")
         self._M=tf.placeholder(tf.float32,[None,self.output_size,1,self.memory_size],name='M')
@@ -45,18 +48,15 @@ class policy:
         return self.weight
         
     def update(self, episode_memory):
-        episode_memory = np.array(episode_memory)
-        s = np.array(episode_memory[:,0].tolist())
-        r = np.array(episode_memory[:,1].tolist())[:,0]        
-        memory = np.array(episode_memory[:,2].tolist())
-        self.sess.run([self.loss,self.train], {self._X: s, self._r: r, self._M: memory})
-    
-    def discounting_reward(self,r):
-        discounted_r = np.zeros_like(r,dtype = np.float32)
-        running_add = 0
-        for t in reversed(range(len(r))):
-            running_add = running_add *0.99 +r[t]
-            discounted_r[t] = running_add
-        return discounted_r
+        self.state_deque = np.array(self.state_deque)
+        self.memory_deque = np.array(self.memory_deque)
+        self.reward_deque = np.array(self.reward_deque)
+        self.sess.run([self.loss,self.train], {self._X: self.state_deque, self._r: self.reward_deque, self._M: self.memory_deque})
+        self.state_deque = deque()
+        self.memory_deque = deque()
+        self.reward_deque = deque()
         
-        
+    def buffer(self,s,r,m):
+        self.state_deque.append(s)
+        self.memory_deque.append(m)
+        self.reward_deque.append(r)

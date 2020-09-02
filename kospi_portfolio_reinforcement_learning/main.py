@@ -18,17 +18,6 @@ def memory_queue(memory,weight):
     memory = np.concatenate((weight,memory),axis=2)[:,:,:-1]
     return memory
 
-def normalize_tensor(s):
-    v_tensor = deque()
-    for j in range(num_of_asset):
-        v_array = deque()
-        for i in range(input_day_size):
-            v_array.append(s[j,i]/s[j,-1])
-        v_array = np.array(v_array)
-        v_tensor.append(v_array)
-    v_tensor = np.array(v_tensor)
-    return v_tensor
-
 def MM_scaler(s):
     x= np.zeros(s.shape)
     for i in range(len(s)):
@@ -37,7 +26,7 @@ def MM_scaler(s):
     
 
 #preprocessed data loading
-is_train = 'test'
+is_train = 'train'
 path_data = './preprocess/'+is_train+'_price_tensor.npy'
 asset_data = np.load(path_data, allow_pickle=True)
 
@@ -54,7 +43,7 @@ num_episodes = 30000 if is_train =='train' else 1
 save_frequency = 100
 save_path = './algorithms'
 save_model = 1
-load_model = 1
+load_model = 0
 if is_train=='test':
     env = environment.env(train = False)
 else:
@@ -78,12 +67,12 @@ with tf.Session(config=config) as sess:
         s=env.start()
         s=MM_scaler(s)
         done=False
-        m = np.zeros([10,1,20],dtype=np.float32)
+        m = np.ones([10,1,20],dtype=np.float32)
         while not done:
             w= agent.predict(s,m)
             s_prime,r,done,value = env.action(w)
             s_prime=MM_scaler(s_prime)
-            episode_memory.append([s,r,m])
+            agent.buffer(s,r,m)
             m=memory_queue(m,w)
             s = s_prime
             if done:
