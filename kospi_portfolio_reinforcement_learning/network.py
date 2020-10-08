@@ -7,7 +7,6 @@ Created on Wed Aug 19 21:20:16 2020
 import tensorflow as tf
 import tensorflow.contrib.layers as layer
 import numpy as np
-from collections import deque
 
 class policy:
     def __init__(self, sess, num_of_feature, day_length, num_of_asset, memory_size=20 , filter_size = 3, learning_rate = 1e-4, name='EIIE'):
@@ -21,10 +20,9 @@ class policy:
         regularizer = tf.contrib.layers.l2_regularizer(scale=0.1)
         initializer = layer.xavier_initializer()
         
-        self._X=tf.placeholder(tf.float32,[None,self.output_size,self.input_size,self.num_of_feature],name="s")
+        self._X=tf.placeholder(tf.float32,[None,self.output_size,self.input_size,self.num_of_feature],name="s") # shape: batch,10,50,4
         self._M=tf.placeholder(tf.float32,[None,self.output_size,1,self.memory_size],name='M')
         self._r=tf.placeholder(tf.float32,[None,self.output_size],name='r')
-        self._v = tf.placeholder(shape=[None], dtype=tf.float32)
         
         self.conv1 = layer.conv2d(self._X, 8, [1,self.filter_size], padding='VALID',activation_fn = tf.nn.leaky_relu, weights_initializer = initializer)
         self.conv2 = layer.conv2d(self.conv1, 1, [1,self.input_size-self.filter_size+1], padding='VALID',activation_fn = tf.nn.leaky_relu, weights_initializer = initializer, weights_regularizer = regularizer)
@@ -33,16 +31,13 @@ class policy:
         
         self.conv3 = layer.conv2d(self.feature_map, 1, [1,1], padding='VALID',activation_fn = tf.nn.leaky_relu, weights_initializer = initializer, weights_regularizer = regularizer)
         
-        #self.conv3 = (self.conv3 - tf.reduce_min(self.conv3))/(tf.reduce_max(self.conv3)-tf.reduce_min(self.conv3))
+        self.conv3 = (self.conv3 - tf.reduce_min(self.conv3))/(tf.reduce_max(self.conv3)-tf.reduce_min(self.conv3))
         self.fc1 = layer.fully_connected(layer.flatten(self.conv3), 50, activation_fn=tf.nn.leaky_relu ,weights_regularizer = regularizer)
         self.fc2 = layer.fully_connected(self.fc1,20,activation_fn = tf.nn.leaky_relu,weights_regularizer = regularizer)
         self.policy = layer.fully_connected(self.fc2, self.output_size, activation_fn=tf.nn.softmax)
-        self.value = layer.fully_connected(self.fc2,1)
 
-        self.value_loss = tf.reduce_sum(tf.square(self._v - self.value))
-        self.policy_loss = -tf.reduce_sum(self.policy * self._r)
-        
-        self.loss = self.value_loss + self.policy_loss
+
+        self.loss = -tf.reduce_sum(self.policy * self._r)
         
         self.train = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
         
@@ -57,8 +52,7 @@ class policy:
         s = np.array(episode_memory[:,0].tolist())
         r = np.array(episode_memory[:,1].tolist())[:,0]        
         memory = np.array(episode_memory[:,2].tolist())
-        total_return = np.array(episode_memory[:,3].tolist())
-        self.sess.run([self.loss,self.train], {self._X: s, self._r: r, self._M: memory,self._v: total_return})
+        self.sess.run([self.loss,self.train], {self._X: s, self._r: r, self._M: memory})
     
     def discounting_reward(self,r):
         discounted_r = np.zeros_like(r,dtype = np.float32)
@@ -69,16 +63,13 @@ class policy:
         return discounted_r
         
 class select_network:
-    def __init__(self, sess, data_class, num_of_feature = 4, filter_size = 3, day_length = 50, learning_rate = 1e-4, name = 'attention'):
+    def __init__(self, sess, num_of_feature = 4, filter_size = 3, day_length = 50, learning_rate = 1e-4, name = 'attention'):
         self.sess = sess
         self.net_name = name
-        self.data = data_class
         regularizer = tf.contrib.layers.l2_regularizer(scale=0.1)
         initializer = layer.xavier_initializer()
         
-        self.data_len = len(self.data.loaded_list)
-        
-        self._X = tf.placeholder(tf.float32,[None, day_length, num_of_feature,1])
+        self._X = tf.placeholder(tf.float32,[None, day_length, num_of_feature,1]) # shape: batch,50,4,1
         self._y = tf.placeholder(tf.float32,[None])
         
         self.conv1 = layer.conv2d(self._X, 2, [filter_size, num_of_feature], padding='VALID',activation_fn = tf.nn.leaky_relu, weights_initializer = initializer)
@@ -90,10 +81,15 @@ class select_network:
         self.train = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
         
     def predict(self,s):
-        s = np.expand_dims(s,axis = 0)
         s = np.expand_dims(s,axis = -1)
         self.pi_hat = self.sess.run(self.v,{self._X:s})
         return self.pi_hat
-    
-    def update(self, s, pi):
-        self.sess.run([self.loss,self.train], {self._X: s, self._y: pi})
+        
+    def update(self, episode_memory):
+        episode_memory = np.array(episode_memory)
+        s = np.array(episode_memory[:,0].tolist())
+        pi = np.array(episode_memory[:,1].tolist())
+        for i in range(len(episode_memory)):
+            ss = np.expand_dims(s[i],axis=-1)
+            v = pi[i][0]
+            self.sess.run([self.loss,self.train], {self._X: ss, self._y: v})

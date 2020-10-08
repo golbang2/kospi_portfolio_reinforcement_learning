@@ -24,42 +24,40 @@ def MM_scaler(s):
         x[i]=(s[i]-np.min(s[i],axis=0))/((np.max(s[i],axis=0)-np.min(s[i],axis=0))+1e-5)
     return x
 
-
 def round_down(x):
     return round((x-1)*100,4)
     
 
 #preprocessed data loading
-is_train = 'test'
-path_data = './preprocess/'+is_train+'_price_tensor.npy'
-asset_data = np.load(path_data, allow_pickle=True)
+is_train = 0
 
 #hyperparameters
 learning_rate = 3e-5
 memory_size = 20
 input_day_size = 50
 filter_size = 3
-num_of_feature = asset_data.shape[2]
-num_of_asset = asset_data.shape[0]
-num_episodes = 30000 if is_train =='train' else 100
+num_of_feature = 4
+num_of_asset = 10
+num_episodes = 30000 if is_train ==1 else 1
 money = 1e+8
 
 #saving
 save_frequency = 100
 save_path = './algorithms'
-save_model = 0
+save_model = 1
 load_model = 1
-if is_train=='test':
-    env = environment.env(train = 'test1', decimal = 0)
+if is_train==0:
+    env = environment.env(train = 0)
 else:
-    env = environment.env(decimal = True)
+    env = environment.env()
 
 config = tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
 
 with tf.Session(config=config) as sess:
-    agent=network.policy(sess,num_of_feature,input_day_size,num_of_asset,memory_size,filter_size,learning_rate = learning_rate,name='EIIE')
-    agent.sess.run(tf.global_variables_initializer())
+    allocator=network.policy(sess,num_of_feature,input_day_size,num_of_asset,memory_size,filter_size,learning_rate = learning_rate,name='EIIE')
+    selector = network.select_network(sess)
+    sess.run(tf.global_variables_initializer())
     
     if save_model:
         saver = tf.train.Saver(max_to_keep=10)
@@ -68,28 +66,35 @@ with tf.Session(config=config) as sess:
             saver.restore(sess,ckpt.model_checkpoint_path)
     score = 0
     vench = 0
+    value_list = []
     for i in range(num_episodes):
-        episode_memory = deque()
+        allocator_memory = deque()
+        selector_memory = deque()
         s=env.start(money = money)
         s=MM_scaler(s)
         done=False
         m = np.ones([10,1,20],dtype=np.float32)
         weight_memory = []
         while not done:
-            w= agent.predict(s,m)
-            s_prime,r,done,value = env.action(w)
+            conditional_pi = selector.predict(s)
+            selected_s = env.selecting(conditional_pi)
+            selected_s = MM_scaler(selected_s)
+            w= allocator.predict(selected_s,m)
+            s_prime,r,done,v_prime = env.action(w)
             s_prime=MM_scaler(s_prime)
-            delta_value = (np.sum(w*env.y)-1)*100
-            episode_memory.append([s,r,m,delta_value])
+            allocator_memory.append([selected_s,r,m])
+            selector_memory.append([selected_s,r])
             weight_memory.append(w)
             m=memory_queue(m,w)
             s = s_prime
+            v = v_prime
+            value_list.append(v)
             if done:
-                score+=value/money
-                vench+=env.venchmark
-                print(i,'agent:',round_down(value/money), 'venchmark: ',round_down(env.venchmark), 'gap:',round_down(value/money)-round_down(env.venchmark))
-                if is_train =='train':
-                    agent.update(episode_memory)
+                score+=v/money
+                print(i,'agent:',v/money)
+                if is_train ==1:
+                    allocator.update(allocator_memory)
+                    selector.update(selector_memory)
 
         if save_model == 1 and i % save_frequency == save_frequency - 1:
             saver.save(sess,save_path+'/model-'+str(i)+'.cptk')
