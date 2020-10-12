@@ -9,7 +9,7 @@ import tensorflow.contrib.layers as layer
 import numpy as np
 
 class policy:
-    def __init__(self, sess, num_of_feature, day_length, num_of_asset, memory_size=20 , filter_size = 3, learning_rate = 1e-4, name='EIIE'):
+    def __init__(self, sess, num_of_feature, day_length, num_of_asset, memory_size=20 , filter_size = 3, learning_rate = 1e-4, name='allocator'):
         self.sess = sess
         self.input_size=day_length
         self.output_size=num_of_asset
@@ -35,9 +35,8 @@ class policy:
         self.fc1 = layer.fully_connected(layer.flatten(self.conv3), 50, activation_fn=tf.nn.leaky_relu ,weights_regularizer = regularizer)
         self.fc2 = layer.fully_connected(self.fc1,20,activation_fn = tf.nn.leaky_relu,weights_regularizer = regularizer)
         self.policy = layer.fully_connected(self.fc2, self.output_size, activation_fn=tf.nn.softmax)
-
-
-        self.loss = -tf.reduce_sum(self.policy * self._r)
+        
+        self.loss = -tf.reduce_sum((self._r)*tf.log(self.policy+1e-6))
         
         self.train = tf.train.AdamOptimizer(learning_rate).minimize(self.loss)
         
@@ -52,6 +51,8 @@ class policy:
         s = np.array(episode_memory[:,0].tolist())
         r = np.array(episode_memory[:,1].tolist())[:,0]        
         memory = np.array(episode_memory[:,2].tolist())
+        v = np.array(episode_memory[:,3].tolist())
+        r = r-v
         self.sess.run([self.loss,self.train], {self._X: s, self._r: r, self._M: memory})
     
     def discounting_reward(self,r):
@@ -63,7 +64,7 @@ class policy:
         return discounted_r
         
 class select_network:
-    def __init__(self, sess, num_of_feature = 4, filter_size = 3, day_length = 50, learning_rate = 1e-4, name = 'attention'):
+    def __init__(self, sess, num_of_feature = 4, filter_size = 3, day_length = 50, learning_rate = 1e-4, name = 'selector'):
         self.sess = sess
         self.net_name = name
         regularizer = tf.contrib.layers.l2_regularizer(scale=0.1)

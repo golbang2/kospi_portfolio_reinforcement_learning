@@ -45,9 +45,10 @@ money = 1e+8
 save_frequency = 100
 save_path = './algorithms'
 save_model = 1
-load_model = 1
+load_model = 0
 if is_train==0:
     env = environment.env(train = 0)
+    load_model = 1
 else:
     env = environment.env()
 
@@ -60,7 +61,7 @@ with tf.Session(config=config) as sess:
     sess.run(tf.global_variables_initializer())
     
     if save_model:
-        saver = tf.train.Saver(max_to_keep=10)
+        saver = tf.train.Saver(max_to_keep=3)
         ckpt = tf.train.get_checkpoint_state(save_path)
         if load_model:
             saver.restore(sess,ckpt.model_checkpoint_path)
@@ -74,6 +75,7 @@ with tf.Session(config=config) as sess:
         s=MM_scaler(s)
         done=False
         m = np.ones([10,1,20],dtype=np.float32)
+        v=money
         weight_memory = []
         while not done:
             conditional_pi = selector.predict(s)
@@ -82,7 +84,7 @@ with tf.Session(config=config) as sess:
             w= allocator.predict(selected_s,m)
             s_prime,r,done,v_prime = env.action(w)
             s_prime=MM_scaler(s_prime)
-            allocator_memory.append([selected_s,r,m])
+            allocator_memory.append([selected_s,r,m,np.repeat(((v_prime/v-1)*100),10)])
             selector_memory.append([selected_s,r])
             weight_memory.append(w)
             m=memory_queue(m,w)
@@ -103,3 +105,12 @@ with tf.Session(config=config) as sess:
             print(score-vench)
             score = 0
             vench = 0
+
+'''
+plt.plot(v_array/v_array[0],label='agent')
+plt.plot(k200/k200[0],label='ks200')
+plt.xlabel("Time Period")
+plt.ylabel("value")
+plt.legend()
+plt.show()
+'''
