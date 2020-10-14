@@ -1,0 +1,94 @@
+%%% fakehangul.sty
+%%%
+%%% lualatex, cp949 (한글)
+%%% Written by Karnes
+%%%
+\ProvidesPackage{hangul}
+
+\newif\if@nanumfont\@nanumfontfalse
+\DeclareOption{nanum}{\@nanumfonttrue}
+\DeclareOption{unfonts}{\@nanumfontfalse}
+\DeclareOption{nojosa}{}
+\DeclareOption{hanja}{}
+
+\ProcessOptions
+
+\RequirePackage{iftex}
+
+\ifPDFTeX
+	\expandafter\endinput
+\fi
+
+\if@nanumfont
+	\gdef\MJ@default{NanumMyeongjo}
+	\gdef\GT@default{NanumGothic}
+	\gdef\TZ@default{NanumGothic}
+	\gdef\GR@default{NanumGothic}
+\else
+	\gdef\MJ@default{UnBatang}
+	\gdef\GT@default{UnDotum}
+	\gdef\TZ@default{UnTaza}
+	\gdef\GR@default{UnGraphic}
+\fi
+
+\RequirePackage{hfont}
+
+\RequirePackage{kotex-sections}
+\kscntformat{section}{}{}
+
+\if@nanumfont
+	\setmainhangulfont{\MJ@default}
+\else
+	\setmainhangulfont{\MJ@default}[Script=Hangul,InterHangul=-.015em]
+\fi
+\setsanshangulfont{\GT@default}
+
+\if@nanumfont
+	\setmonohangulfont{\TZ@default}
+\else
+	\setmonohangulfont{\TZ@default}[Scale=1.05]
+\fi
+
+\ExplSyntaxOn
+
+\DeclareDocumentCommand \hfontfamily { m }
+{
+	\tl_set:Nn \arg_str_tl { #1 }
+	\str_case_x:nnT \arg_str_tl
+	{
+		{mj}	{\tl_set:Nn \hangul_font_of_hfont {\MJ@default} }
+		{gt}	{\tl_set:Nn \hangul_font_of_hfont {\GT@default} }
+		{gr}	{\tl_set:Nn \hangul_font_of_hfont {\GR@default} }
+		{tz}	{\tl_set:Nn \hangul_font_of_hfont {\TZ@default} }
+	}
+	{ \hangulfontspec {\hangul_font_of_hfont } }
+}
+
+\ExplSyntaxOff
+
+\def\그래프{\hangulfontspec{\GR@default}}
+\def\타자{\hangulfontspec{\TZ@default}}
+\if@nanumfont
+	\def\신문{\hangulfontspec{NanumGothic}}
+	\def\옛글{\hangulfontspec{NanumGothic}}
+	\def\디나루{\hangulfontspec{NanumGothic}}
+	\def\필기{\hangulfontspec{NanumGothic}}
+\else
+	\def\신문{\hangulfontspec{UnShinmun}}
+	\def\옛글{\hangulfontspec{UnYetgul}}
+	\def\디나루{\hangulfontspec{UnDinaru}}
+	\def\필기{\hangulfontspec{UnPilgi}}
+\fi
+
+\def\textmj#1{{\hangulfontspec{\MJ@default}#1}}
+\def\textgt#1{{\hangulfontspec{\GT@default}#1}}
+\def\texttz#1{{\hangulfontspec{\TZ@default}#1}}
+\def\textgr#1{{\hangulfontspec{\GR@default}#1}}
+
+%%% compatibility commands for hlguide.tex
+\newskip\hangulskip
+\let\circemph=\dotemph
+\let\noHyphen=\relax
+\def\ㅣ{이}
+
+\endinput

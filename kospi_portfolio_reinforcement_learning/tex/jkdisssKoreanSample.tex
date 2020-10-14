@@ -1,0 +1,123 @@
+\documentclass[a4paper]{article}
+
+\usepackage[nojosa]{hangul}
+%\usepackage{jkdiss_eng}%영문논문인 경우
+\usepackage{kdiss_tabfig}%
+\usepackage{amsmath,graphicx,chicago}
+\usepackage{amssymb}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{hhline}
+
+%% ==================== 여기는 고치지 마십시오. =======================
+%\submit{draft}
+\submit{final}
+\thefirstpage{1}
+\receive{0000}{0}{1}
+\revise{0000}{0}{0}%수정일자
+\accept{0000}{0}{0}%채택일자
+\volumn{00}{0}
+%% ====================================================================
+%\runningtitleauthor{Development of failure reporting analysis and corrective action system}{Hong Yeon Woong}
+\heading{Article for JKDISS}{author1 $\cdot$ author2}
+
+\begin{document}
+
+\title{유가증권 시장에서 강화학습을 이용한 종목선택과 포트폴리오 최적화}% {}\footnote{사사 2.} }
+
+\author{
+김태윤\footnote{(61186) 광주광역시 북구 용봉로 77 자연대 1호관 238, 전남대학교 통계학과, 석사과정. E-mail: 196350@jnu.ac.kr} $\cdot$
+고봉균\footnote{(61186) 광주광역시 북구 용봉로 77 자연대 1호관 , 전남대학교 경영학부, 교수. \\ E-mail: nadozzzzz@choizzz.ac.kr} 
+}
+\address{
+${}^{1}${전남대학교 통계학과} $\cdot$ ${}^{2}${전남대학교 통계학}
+}
+
+\accepted
+\begin{abstract}
+주식 투자와 자산 관리에서 포트폴리오 분배와 최적화는 위험을 관리하고 수익률을 극대화하기 위해 필수적인 부분으로 금융분야에서 해결해야 할 전통적인 문제였다. 한편 최근 딥러닝이 많은 연구가 이루어지고 큰 성과를 이루었고 그와 함께 강화학습 또한 큰 발전을 이루고 있다. 이에 따라 최근 포트폴리오 관리에 강화학습 방법론을 적용하려는 시도가 이루어졌지만 연구의 대부분은 거래 규모가 큰 암호화폐에 한정되어 이루어 진 것이 대부분이다. 본 논문에서는 유가증권시장의 상위 종목 중 대표성이 높은 종목으로 선정되는 KOSPI200을 구성하는 종목 중 투자 대상 주식을 선정하는 selector 네트워크와 선정된 주식을 배분하는 allocator 네트워크 두가지를 통해 포트폴리오를 구성하는 신경망을 강화학습을 통해 구현하였다.
+\end{abstract}
+
+\begin{keywords}{강화학습, 포트폴리오 이론, 딥러닝,코스피}
+\end{keywords}
+
+\section{서론}
+내용이 여기에 옮.
+
+\section{FRACAS 개요}
+내용이 여기에 옮.
+
+\begin{table}[!ht]
+\label{tbl:data}
+\begin{center}
+{\scriptsize
+\tablcap{ 표의 제목}
+
+\begin{tabular}{cccccc} \hline \hline 
+\multicolumn{1}{c}{열제목1} & \multicolumn{1}{c}{열제목2} & \multicolumn{1}{c}{열제목3} & \multicolumn{1}{c}{열제목4} & \multicolumn{1}{c}{열제목5} & \multicolumn{1}{c}{열제목6} \\ \cline{1-6}
+\multicolumn{1}{c}{1} & \multicolumn{1}{c}{123} & \multicolumn{1}{c}{88} & \multicolumn{1}{c}{33} & \multicolumn{1}{c}{aa} & \multicolumn{1}{c}{999} \\ 
+\hline 
+\end{tabular}
+}
+\end{center}
+\end{table}
+
+
+내용이 여기에 옮.
+\begin{equation*}
+h (y) = \sin \biggl (P_1 (\beta;y) + R_2 (\gamma;y) \biggr),
+\end{equation*}
+ 
+ 내용이 여기에 옮.
+  
+ \begin{equation} \label{model}
+h (x) = \log \left ( \int_{i,\ j} \alpha_{[i][j]} x_{ij} x_{i (j+1)} \ + \ \beta_{[i][j]} y_{ij} mu_{ (i+1)j} \right),
+\end{equation}
+
+내용이 여기에 옮.
+ 
+ \begin{figure}[!ht]
+	\centering
+	\includegraphics[width=0.6\textwidth]{figure1_1}  
+	\begin{center}
+	\figcap{그림 제목}  
+	\end{center}
+	\label{fig1:data}
+\end{figure}
+
+ 내용이 여기에 옮. 
+
+ 
+\theorem 정리 내용
+\proof 증명이 여기에 옮.
+\endproof
+
+\begin{references}
+\bibitem[author (2008)]{key}Kang, S. M. and Kim, J. H. (2008). Statistical model of effective impact speed based on vehicle damages in case of rear-end collisions.{\em Journal of the\/}{\em Korean Data \& Information Science Society\/}, {\bf{19}}, 463-473. 
+\end{references}
+
+\appendix
+\section{절 제목}{}
+내용이 여기에 옮.
+
+\theorem 정리의 내용이 여기에 옮.
+\proof 정리의 증명이 여기에.
+\endproof
+
+\etitle{Article title\footnote{This reserach bla bla bla....}}
+
+\eauthor{
+{Author First}\footnote{{Professor, Department of Statistics, Gyeongbuk 712-749, Korea.} \\E-mail: zzzzaong@azzzz.ac.kr }
+ $\cdot$ {Author Second}\footnote{{Professor, Department of Management, Seoul 100-100, Korea.} \\E-mail: zzzzaong@bzzzz.ac.kr }}
+\eaddress{
+${}^{}${Department of Statistics, Azzzz University}\\${}^{}${Department of Management, Bzzzz University}
+}
+
+\eaccepted
+\begin{eabstract}
+Some sentences come here.
+\end{eabstract}
+
+\ekeywords{ key1, key2. }
+
+\end{document}

@@ -1,0 +1,598 @@
+% 2009-6-10 13:18
+
+%% ================================================================================================================
+%% This style file is for preparing articles for the Journal of Korean Data & Information Science Society (JKDISS). 
+%% It is first provided in 2009 by the Editorial Board of JKDISS.
+%% If you have any questions or find any bugs on this file please contact jkdi@knu.ac.kr
+%% 
+%% Revisions: 6-10-2009(mon-day-year), . 
+%% ===============================================================================================================
+
+\NeedsTeXFormat{LaTeX2e}
+\RequirePackage{caption}
+
+%\input glyphtounicode\pdfgentounicode=1
+
+
+% Page layout
+%
+
+% 용지 지정 - A4
+\setlength{\paperheight}{297mm}%
+\setlength{\paperwidth}{210mm}
+
+% 텍스트 영역 지정
+\setlength{\textheight}{19.5cm}%
+\setlength{\textwidth}{14.0cm}%{13.5cm}%
+
+% 홀 짝 페이지 여백 지정
+\setlength{\oddsidemargin}{1.1 cm}%
+\setlength{\evensidemargin}{1.1 cm}%
+
+%문단 첫줄 들여쓰기 
+\setlength{\parindent}{0.9 em}%
+
+\setlength\headheight{20 pt}%
+
+\def\m@th{\mathsurround\z@}%\newcommand
+\def\hb@xt@{\hbox to}
+
+\DeclareRobustCommand*\textsuperscript[1]{%
+  \@textsuperscript{\selectfont#1}}
+
+\def\@textsuperscript#1{%
+  $\m@th^{\mbox{\fontsize\sf@size\z@$#1$}}$}
+%----------------------------------
+
+\RequirePackage{ifthen}
+%----------------------------------
+% Indentation after sectioning command
+\let\@afterindentfalse\@afterindenttrue
+\@afterindenttrue
+
+% For sample file
+\def\AMSLaTeX{$\cal A\kern-.1667em \lower.5ex\hbox{$\cal M$}\kern-.125em S$-\LaTeX}
+
+\newcounter{endpage}
+\newcounter{remark}
+\newcounter{example}
+\newcounter{ref}
+\DeclareSymbolFont{AMSa}{U}{msa}{m}{n}
+\DeclareMathSymbol\square {\mathord}{AMSa}{"03}
+
+% SUPERSCRIPTS AND SUBSCRIPTS
+% Declaration which causes superscripts and subscripts to be output at normal
+% text size
+\long\def\@footnotetext#1{\insert\footins%
+ {\def\baselinestretch{1}\footnotesize%
+ \interlinepenalty\interfootnotelinepenalty%
+ \splittopskip\footnotesep \splitmaxdepth%
+ \dp\strutbox \floatingpenalty \@MM \hsize\columnwidth%
+ \@parboxrestore \edef%
+ \@currentlabel{\csname p@footnote\endcsname\@thefnmark}
+ \@makefntext{\rule{\z@}{\footnotesep}\ignorespaces #1\strut}}}
+
+% Singlespaced hanging paragraph environment for uncited bibliographies.
+\def\singlespace{\vskip\baselineskip \def\baselinestretch{1}\@normalsize
+      \vskip-\baselineskip}
+\def\endsinglespace{\par}
+
+\renewcommand\large{%
+   \@setfontsize\normalsize\@xpt\@xiipt
+   \abovedisplayskip 10\p@ \@plus2\p@ \@minus5\p@
+   \abovedisplayshortskip \z@ \@plus3\p@
+   \belowdisplayshortskip 6\p@ \@plus3\p@ \@minus3\p@
+   \belowdisplayskip \abovedisplayskip
+   \let\@listi\@listI}
+
+\renewcommand\normalsize{%
+   \@setfontsize\small\@ixpt{11}%
+   \abovedisplayskip 8.5\p@ \@plus3\p@ \@minus4\p@
+   \abovedisplayshortskip \z@ \@plus2\p@
+   \belowdisplayshortskip 4\p@ \@plus2\p@ \@minus2\p@
+   \def\@listi{\leftmargin\leftmargini
+               \topsep 4\p@ \@plus2\p@ \@minus2\p@
+               \parsep 2\p@ \@plus\p@ \@minus\p@
+               \itemsep \parsep}%
+   \belowdisplayskip \abovedisplayskip
+}
+\normalsize
+
+
+% Start to define ckss.sty
+
+\newif\if@korean
+
+\DeclareOption{kor}{\@koreantrue
+	\renewcommand{\baselinestretch}{1.2}
+	\def\ksnamedef#1#2{%
+		\AtBeginDocument{\@namedef{ks#1}{#2} \@namedef{#1}{\expandafter\protect\csname ks#1\endcsname}}
+	}
+    \newcommand{\nohyphens}{\hyphenpenalty=10000\exhyphenpenalty=10000\relax}
+    \def\appendixname{부록}
+    \def\tablename{{Table}}
+    \def\figurename{{Figure}}
+    \def\abstractname{요{}약}
+    \def\refnamex{참고문헌}
+    \def\refnameE{References}
+    \def\theoremname{정리}
+    \def\corollaryname{보조정리}
+    \def\definitionname{정의}
+    \def\proofname{\textbf{증명}}
+    \def\propositionname{명제}
+    \def\assumptionname{가정}
+    \def\examplename{예제}
+    
+	\def\keywords#1{
+		\vskip 1em %
+		\begin{quote} 
+			\noindent\신문\footnotesize{주요용어:} 
+			\rm \footnotesize #1 
+		\end{quote} 
+		\vskip 1.0em 
+	}
+
+	\def\ekeywords#1{\vskip 1em %
+        \small\begin{quote}{\it Keywords}: #1\end{quote}\ifx\@submit\@final\label{sec:\theendpage}\fi}%
+	
+    \renewenvironment{abstract}{
+		\vskip 0.8em
+		\begin{center}%
+			{\textbf{\abstractname} \vspace{-0.5em}\vspace{\z@}}%
+		\end{center}%
+		\footnotesize 
+			\begin{quote} 
+				\hskip 1.5em%
+	}
+	{\end{quote}}%
+	
+	\newenvironment{eabstract}{\vskip 0.8em
+        \begin{center}%
+          {\normalsize \bf {Abstract}\vspace{-0.5em}\vspace{\z@}}%
+        \end{center}%
+		\small \begin{quote} \hskip 1.5em%
+	}%
+    {\end{quote}}% 
+}%
+%
+\ExecuteOptions{kor}%
+\ProcessOptions
+\newtheorem{theorem}{\theoremname}[section]
+\newtheorem{corollary}{\corollaryname}[section]
+\newtheorem{definition}{\definitionname}[section]
+\newtheorem{proposition}{\propositionname}[section]
+\newtheorem{assumption}{\assumptionname}[section]
+\def\proof{\trivlist
+           \item[\hskip \labelsep {\reset@font {\proofname:}}]%\bfseries\itshape \proofname:}]
+           \hskip 0pt }
+
+\def\\numberwithinn#1#2{\@ifundefined{c@#1}{\@nocounterr{#1}}{%
+  \@ifundefined{c@#2}{\@nocnterr{#2}}{%
+  \@addtoreset{#1}{#2}%
+  \toks@\expandafter\expandafter\expandafter{\csname the#1\endcsname}%
+  \expandafter\xdef\csname the#1\endcsname
+    {\expandafter\noexpand\csname the#2\endcsname
+     .\the\toks@}}}}
+
+\def\@begintheorem#1#2{\trivlist
+   \item[\hskip \labelsep{\bf #1\ #2}]\rmfamily}
+
+\def\@opargbegintheorem#1#2#3{\trivlist
+      \item[\hskip \labelsep{\bfseries #1\ #2\ (#3)}]\rmfamily}
+
+\def\pageref#1{\expandafter\@setref\csname r@#1\endcsname
+                                   \@secondoftwo{#1}}
+
+\\numberwithinn{equation}{section}
+\\numberwithinn{table}{section}
+\\numberwithinn{figure}{section}
+\\numberwithinn{remark}{section}
+\\numberwithinn{example}{section}
+
+
+\newcommand\figcap[1]{
+ \refstepcounter{figure}
+ \scriptsize \bf Figure~\thefigure~\rm#1
+ \addcontentsline{lof}{subsection}{\scriptsize \bf Figure~\thefigure~ \rm #1}
+}
+
+\newcommand\tablcap[1]{
+ \refstepcounter{table}
+ \scriptsize \bf Table~\thetable~\rm#1
+ \addcontentsline{lof}{subsection}{\scriptsize \bf Table~\thetable~ \rm #1}
+}
+
+\def\@final{final}
+
+\def\submit#1{\def\@submit{#1}
+             \ifx\@submit\@final \@@final
+             \else \@@draft \fi}
+			 
+\def\thefirstpage#1{\def\@thefirstpage{#1}
+	\setcounter{page}{#1}
+}%
+
+%
+% 헤더 형식...
+%
+\def\@@final{\@twosidetrue \@mparswitchtrue  
+	\def\@journaltitlehead{{\rm {\bfseries\@journaltitleEng}} \@journalsubtitleEng} 
+            \def\@journalhead{ {\rm{\it\the\year,}} {\rm{\bfseries\@volumn}}(\rm{\@ho{}}), %
+                                                \@thefirstpage--\pageref{sec:\theendpage}}
+           \def\@text{\fontsize{10}{1}\@journaltitlehead{}\@journalhead }
+            \pagestyle{centerheadings}
+           %
+           %접수 수정 채택 일자
+           %
+	\def\receive##1##2##3{\def\@receiveyear{##1}\def\@receivemonth{##2}\def\@receiveday{##3}}   %접수일자
+    \def\revise##1##2##3{\def\@reviseyear{##1}\def\@revisemonth{##2}\def\@reviseday{##3}}      	%수정일자
+    \def\accept##1##2##3{\def\@acceptyear{##1}\def\@acceptmonth{##2}\def\@acceptday{##3}}      	%채택일자
+    \def\heading##1##2{ \def\@righttext{\scriptsize \rm ##1} \def\@lefttext{\scriptsize \rm ##2}}}
+	
+	\def\@@draft{\@twosidefalse \@mparswitchfalse
+            \pagestyle{centerheadings}
+           \def\heading##1{\markboth{}{##1}}}
+
+	\def\title#1{\cleardoublepage
+             \renewcommand\section{\@startsection {section}{1}{\z@}%
+                       {-3.5ex \@plus -1ex \@minus -.2ex}%
+                       {2.3ex \@plus.2ex}%
+                       {\center \bfseries\large}}
+                       %{\bfseries\large}}
+             \renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
+                                     {-3.25ex\@plus -1ex \@minus -.2ex}%
+                                     {1.5ex \@plus .2ex}%
+                                     {\bf\normalsize}}%
+%                                     {\bf\normalsize}}%
+             \renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
+                                     {-3.25ex\@plus -1ex \@minus -.2ex}%
+                                     {1.0ex \@plus .2ex}%
+                                     {\bf\normalsize}}%
+    \def\@title{\bf #1}\par
+    \def\@seccntformat##1{\csname the##1\endcsname . {}}
+    \renewcommand\thefootnote{{}^\@fnsymbol\c@footnote}%
+    \def\@makefnmark{\rlap{\@textsuperscript{\@thefnmark}}}%
+    \long\def\@makefntext##1{\parindent 1em\noindent
+                \hbox to 1.3em{\hss\normalsize${\@thefnmark}$} \hskip 2pt \parbox[t]{0.95\linewidth}{ \normalfont ##1}}%
+  \setcounter{equation}{0}
+  \setcounter{section}{0}
+  \setcounter{remark}{0}
+  \setcounter{example}{0}
+  \setcounter{footnote}{1}
+  \setcounter{figure}{0}
+  \setcounter{table}{0}
+  \setcounter{definition}{0}
+  \renewcommand{\thetable}{\bfseries \thesection.\@arabic\c@table{}}
+  \renewcommand{\thefigure}{\thesection.\@arabic\c@figure{}}
+  \renewcommand{\thesection}{\arabic{section}}
+  \renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}%
+  \renewcommand{\theexample}{\thesection.\arabic{example}}
+  \renewcommand{\theremark}{\thesection.\arabic{remark}}
+  \refstepcounter{endpage}
+    \if@twocolumn
+      \ifnum \col@number=\@ne
+        \@maketitle
+      \else
+        \twocolumn[\@maketitle]%
+      \fi
+    \else
+      \newpage
+      \global\@topnum\z@   % Prevents figures from going at top of page.
+     \@maketitle
+    \fi}
+
+
+\def\@maketitle{%
+  \newpage
+   \if@twoside
+          \thispagestyle{onesideheadings}
+          \markboth{\@text}{\@text}
+          \markboth{\@lefttext}{\@righttext}
+   \else
+          \thispagestyle{empty}
+    \fi
+  \null
+  \vspace*{-0.2in}%
+  \begin{center}%
+    {\scshape\Large \@title \par}%
+    \vskip 1.0em%
+    \vspace{3ex}
+  \end{center}
+ }	
+
+
+\def\etitle#1{%\cleardoublepage  
+    \def\@etitle{#1}\par
+    \def\@seccntformat##1{\csname the##1\endcsname.{}}
+    \setcounter{footnote}{1}
+	\renewcommand\thefootnote{{}^\@fnsymbol\c@footnote}%
+    \def\@makefnmark{\rlap{\@textsuperscript{\@thefnmark}}}%
+    \long\def\@makefntext##1{\parindent 1em\noindent
+                \hbox to 1.3em{\hss\normalsize${\@thefnmark}$} \hskip 2pt \parbox[t]{0.95\linewidth}{ \normalfont ##1}}%
+    \if@twocolumn
+      \ifnum \col@number=\@ne
+        \@makeetitle
+      \else
+%        \twocolumn[\@maketitle]%
+        \twocolumn[\@makeetitle]%
+      \fi
+    \else
+      \newpage
+      \global\@topnum\z@%Prevents figures from going at top of page.
+     \@makeetitle
+    \fi}
+
+
+
+\def\@makeetitle{%
+  \newpage
+  % \if@twoside
+          \thispagestyle{eonesideheadings}
+          \markboth{\@text}{\@text}
+          \markboth{\@lefttext}{\@righttext}
+   %\else
+          %\thispagestyle{empty}
+         
+    %\fi
+  \null
+  \vspace*{-0.2in}%
+  \begin{center}%
+    {\scshape\Large \bfseries \@etitle \par}%
+    \vskip 1.0em%
+    \vspace{3ex}
+  \end{center}
+ }
+
+\newlength{\Mylen}
+
+\def\author#1{\def\@author{#1}
+    \setcounter{footnote}{0}
+    \renewcommand\thefootnote{\@arabic\c@footnote}%
+    \def\@makefnmark{\hbox to\z@{$\m@th^{\@thefnmark}$\hss}}%
+    \long\def\@makefntext##1{\parindent 1em\noindent
+            \hbox to 1.8em{\hss${}^{\@thefnmark}$} \parbox[t]{0.95\linewidth}{ ##1}}%
+     \begin{center}
+        {\large \@author} 
+     \end{center} 
+     \@thanks }
+
+\def\hauthor#1{\def\@author{#1}
+    \setcounter{footnote}{0}
+    \renewcommand\thefootnote{\@arabic\c@footnote}%
+    \def\@makefnmark{\hbox to\z@{$\m@th^{\@thefnmark}$\hss}}%
+    \long\def\@makefntext##1{\noindent
+            \hbox to 0.5em{\hss${{}^\@thefnmark}$}##1}%
+            \vspace{-0.17in}
+    \begin{center}\vspace{-.3em}  \large { \scshape  \@author}\vspace{-.01em} \end{center} \@thanks}
+
+\def\eauthor#1{\def\@author{#1}
+    \setcounter{footnote}{0}
+    \renewcommand\thefootnote{\@arabic\c@footnote}%\@arabic은 아라비아 숫자로 풋노트의 일련번호를 매김
+    \def\@makefnmark{\hbox to\z@{$\m@th^{\@thefnmark}$\hss}}%
+    \long\def\@makefntext##1{\parindent 1em\noindent
+            \hbox to 1.8em{\hss${}^{\@thefnmark}$} \parbox[t]{0.95\linewidth}{ ##1}}%
+    \vspace{-0.15in}
+    \begin{center}
+		\vspace{-.3em}  
+		\large 
+		{\scshape  \rm \@author}
+		\vspace{-.01em} 
+	\end{center} 
+	\@thanks
+}%
+
+\def\address#1{ %
+                 \begin{center}\vspace{-.3em} \scshape \normalsize
+                 #1
+                  \end{center}
+                  }  
+                  
+\def\haddress#1{ %
+%                 \begin{center}\vspace{-.3em} \scshape \small
+%                 \begin{center}\vspace{-.3em} \그래프\scshape \small
+%                 \begin{center}\vspace{-.3em} \scshape \small
+                 \begin{center}\vspace{-.3em} \scshape \normalsize
+                 #1
+                  \end{center}
+                  }  
+
+%
+% 접수 수정 채택 일자 찍기
+%                                    
+\def\accepted{ %
+                 \begin{center}\vspace{-.1em} \scshape \footnotesize\vspace{-.5em}
+%                 \begin{center}\vspace{-.1em} \그래프\scshape \footnotesize\vspace{-.5em}
+                 \ifx\@submit\@final
+                 	접수 \@receiveyear 년 \@receivemonth 월 \@receiveday 일, 
+                 	수정 \@reviseyear 년 \@revisemonth 월 \@reviseday 일,
+                 	게재확정 \@acceptyear 년 \@acceptmonth 월 \@acceptday 일
+		  \else \@receiveyear 년 \@receivemonth 월 접수
+		  \fi
+                 \end{center}
+                   }
+
+\def\haccepted{ %
+                 \begin{center}\vspace{-.1em} \scshape \footnotesize\vspace{-.5em}
+%                 \begin{center}\vspace{-.1em} \그래프\scshape \footnotesize\vspace{-.5em}
+                 \ifx\@submit\@final
+                 	\@receiveyear 년 \@receivemonth 월 접수, 
+                 	\@reviseyear 년 \@revisemonth 월 \@reviseday 일 수정,
+                 	\@acceptyear 년 \@acceptmonth 월 \@acceptday 일 게재확정
+		  \else \@receiveyear 년 \@receivemonth 월 접수
+		  \fi
+                 \end{center}
+                   }
+
+		  
+ \def\eaddress#1{ %
+%                 \begin{center} \sffamily \small
+                 \begin{center} \rm \normalsize
+                 #1
+                  \end{center}
+                  }  
+		  
+\def\emonth#1{\ifcase#1 \or%
+  	January\or  February\or  March\or    April\or%
+  	May\or      June\or      July\or     August\or%
+  	September\or October\or November\or December%
+\fi}
+
+\def\eaccepted{ %
+%                 \begin{center} \vspace{-.1em} \그래프\scshape \footnotesize\vspace{-.5em}
+                 \begin{center} \vspace{-.1em} \scshape \footnotesize\vspace{-.5em}
+                 \ifx\@submit\@final \rm\scriptsize
+                 	Received \@receiveday\ \emonth{\@receivemonth} \@receiveyear, revised \@reviseday\ \emonth{\@revisemonth} \@reviseyear, accepted \@acceptday\ \emonth{\@acceptmonth} \@acceptyear
+
+		  \else (Received \emonth{\@receivemonth} \@receiveday, \@receiveyear)
+		  \fi
+                 \end{center}
+                   }
+
+
+
+\def\ps@centerheadings{%
+    \let\@oddfoot\@empty\let\@evenfoot\@empty
+%    \def\@evenhead{\thepage\hfil\scshape\그래프 \leftmark\hfil\phantom{\thepage}}%
+    \def\@evenhead{\thepage\hfil\scshape \leftmark\hfil\phantom{\thepage}}%
+%    \def\@oddhead{\phantom{\thepage}\hfil{\scshape\그래프 \rightmark}\hfil\thepage}%
+    \def\@oddhead{\phantom{\thepage}\hfil{\scshape \rightmark}\hfil\thepage}%
+    \let\@mkboth\@gobbletwo
+    \let\sectionmark\@gobble
+    \let\subsectionmark\@gobble}
+
+  
+\def\ps@eonesideheadings{%
+    \let\@oddfoot\@empty
+     \let\@evenfoot\@empty
+%    \def\@evenhead{\hfil\slshape\fontsize{8}{1}\selectfont\leftmark}%
+    \def\@evenhead{{{\fontsize{8}{1}\begin{tabular}{@{}l}\@journaltitleEng{}\\ [-.4em] \@journalsubtitleEng\\ [-.4em]%
+    \@journalhead\end{tabular}\hfil}}}
+    \def\@oddhead{{{\fontsize{8}{1}\begin{tabular}{@{}l}\@journaltitleEng{}\\ [-.4em] \@journalsubtitleEng\\ [-.4em]%
+    \@journalhead\end{tabular}\hfil}}}
+    \let\@mkboth\@gobbletwo
+    \let\sectionmark\@gobble
+    \let\subsectionmark\@gobble}
+
+
+\def\ps@onesideheadings{%
+    \let\@oddfoot\@empty
+     \let\@evenfoot\@empty
+    \def\@evenhead{\hfil\slshape\fontsize{8}{1}\selectfont\leftmark}%
+    \def\@oddhead{{{\fontsize{8}{1}\begin{tabular}{@{}l}\@journaltitleEng{} \\ [-.4em] \@journalsubtitleEng{} \\ [-.3em]%
+    \@journalhead\end{tabular}\hfil}}}%{{\slshape\fontsize{7}{1}\selectfont\rightmark}\hfil}
+    \let\@mkboth\@gobbletwo
+    \let\sectionmark\@gobble
+    \let\subsectionmark\@gobble}
+
+
+\newcommand{\Appendix}{%
+            \@startsection {section}{1}{\z@}%
+             {-3.5ex \@plus -1ex \@minus -.2ex}%
+             {2.3ex \@plus.2ex}%
+             {\center 
+               \bf\large \appendixname{} \thesection :{} 
+              }
+              }
+\newcommand{\sAppendix}{%
+            \@startsection {section}{1}{\z@}%
+             {-3.5ex \@plus -1ex \@minus -.2ex}%
+             {2.3ex \@plus.2ex}%
+             {\center \bf\large \appendixname }}
+%
+% 부록 환경
+%
+\renewcommand{\appendix}{\par
+  \setcounter{section}{0}%
+  \setcounter{equation}{0}
+  \setcounter{subsection}{0}%
+  \renewcommand{\thesection}{\@Alph\c@section}
+  \renewcommand{\thesubsection}{\@Alph\c@section.\arabic{subsection}}%
+  \def\@seccntformat##1{\csname the##1 \endcsname {}}
+  \renewcommand{\section}{%
+                \secdef\Appendix\sAppendix}}
+%
+% 증명의 마지막
+%
+\def\endproof{{\hspace*{\fill}\nolinebreak[2]\hspace*{\fill}}$\square$\endtrivlist}
+
+\def\remark{\stepcounter{remark}
+    \trivlist
+    \item[\hskip \labelsep {\reset@font \bfseries\itshape Remark \theremark}]
+    \hskip 3pt }
+\def\endremark{\endtrivlist}
+\def\example{\stepcounter{example}
+    \trivlist
+    \item[\hskip \labelsep {\reset@font \bfseries\itshape {\examplename{} \theexample}}]
+    \hskip 3pt }
+\def\endexample{\endtrivlist}
+
+%
+% 저널 타이틀 - 한글, 영어
+%
+\def\@journaltitleKor{\rm  {한국데이터정보과학회지}  } 
+\def\@journalsubtitleKor{\rm  {Data $\&$  \par \rm Information Science Society} }    
+
+%
+% 저널 타이틀
+%
+\def\@journaltitleEng{\it Journal of the Korean  Data \& \hskip 198pt \rm 한국데이터정보과학회지 } 
+\def\@journalsubtitleEng{\it {Information Science Society} }    
+\def\volumn#1#2{ \def\@volumn{#1} \def\@ho{#2}  }
+%
+
+
+\def\references{\setcounter{ref}{0}
+  \vspace{\baselineskip} \par
+  \begin{center}
+  \large\bf\refnamex
+  \vspace{2mm}
+  \end{center}  
+  \par
+  \def\baselinestretch{1}\@normalsize%
+   \footnotesize \list{}
+   %\list{}
+       {\setlength\leftmargin{2.3em}
+        \setlength\labelsep{0.3em}
+        \setlength\itemindent{-2em}
+        \parsep  0pt\relax
+        \itemsep\parsep
+        \usecounter{enumiv}%
+        \let\p@enumiv\@empty
+        \def\theenumiv{\arabic{enumiv}}%
+        }%
+  \let\newblock\bibitem\relax%
+}
+
+\def\ereferences{\setcounter{ref}{0}
+  \vspace{\baselineskip} \par
+  \begin{center}
+%  \large\bf\refnamex
+  \large\bf\refnamex
+  \vspace{2mm}
+  \end{center}  
+  \par
+  \def\baselinestretch{1}\@normalsize%
+   \list{}
+       {\setlength\leftmargin{2.3em}
+        \setlength\labelsep{0.3em}
+        \setlength\itemindent{-2em}
+        \parsep  0pt\relax
+        \itemsep\parsep
+        \usecounter{enumiv}%
+        \let\p@enumiv\@empty
+        \def\theenumiv{\arabic{enumiv}}%
+        }%
+  \let\newblock\bibitem\relax%
+}
+
+\def\endereferences{
+      \endlist
+}
+
+\def\endreferences{
+      \endlist
+}
+
+\def\footnoterule{\kern-3\p@
+     \hrule \@width 6.2cm \kern 2.6\p@} 
+\endinput
