@@ -29,7 +29,7 @@ def round_down(x):
     
 
 #preprocessed data loading
-is_train = 0
+is_train = 1
 
 #hyperparameters
 learning_rate = 3e-5
@@ -38,14 +38,14 @@ input_day_size = 50
 filter_size = 3
 num_of_feature = 4
 num_of_asset = 10
-num_episodes = 30000 if is_train ==1 else 1
+num_episodes = 2000 if is_train ==1 else 1
 money = 1e+8
 
 #saving
 save_frequency = 100
 save_path = './algorithms'
 save_model = 1
-load_model = 0
+load_model = 1
 if is_train==0:
     env = environment.env(train = 0)
     load_model = 1
@@ -56,12 +56,12 @@ config = tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
 
 with tf.Session(config=config) as sess:
-    allocator=network.policy(sess,num_of_feature,input_day_size,num_of_asset,memory_size,filter_size,learning_rate = learning_rate,name='EIIE')
+    allocator=network.policy(sess)
     selector = network.select_network(sess)
     sess.run(tf.global_variables_initializer())
     
     if save_model:
-        saver = tf.train.Saver(max_to_keep=3)
+        saver = tf.train.Saver(max_to_keep=100)
         ckpt = tf.train.get_checkpoint_state(save_path)
         if load_model:
             saver.restore(sess,ckpt.model_checkpoint_path)
@@ -71,29 +71,28 @@ with tf.Session(config=config) as sess:
     for i in range(num_episodes):
         allocator_memory = deque()
         selector_memory = deque()
-        s=env.start(money = money)
+        s,m=env.start()
         s=MM_scaler(s)
         done=False
-        m = np.ones([10,1,20],dtype=np.float32)
         v=money
         weight_memory = []
         while not done:
-            conditional_pi = selector.predict(s)
-            selected_s = env.selecting(conditional_pi)
+            evaluated_value= selector.predict(s,m)
+            selected_s,selected_m = env.selecting(evaluated_value)
             selected_s = MM_scaler(selected_s)
-            w= allocator.predict(selected_s,m)
-            s_prime,r,done,v_prime = env.action(w)
+            w= allocator.predict(selected_s,selected_m)
+            s_prime,r,done,v_prime,growth,m_prime = env.action(w)
             s_prime=MM_scaler(s_prime)
-            allocator_memory.append([selected_s,r,m,np.repeat(((v_prime/v-1)*100),10)])
-            selector_memory.append([selected_s,r])
+            allocator_memory.append([selected_s,r,selected_m,np.repeat(((v_prime/v-1)*100),10)])
+            selector_memory.append([s,(growth*10),m])
             weight_memory.append(w)
-            m=memory_queue(m,w)
             s = s_prime
             v = v_prime
+            m = m_prime
             value_list.append(v)
             if done:
                 score+=v/money
-                print(i,'agent:',v/money)
+                print(i,'agent:',round(v/money,4), 'acc: ',round((env.acc[0,0]+env.acc[1,2])/(np.sum(env.acc)-11452),4))
                 if is_train ==1:
                     allocator.update(allocator_memory)
                     selector.update(selector_memory)
@@ -102,11 +101,16 @@ with tf.Session(config=config) as sess:
             saver.save(sess,save_path+'/model-'+str(i)+'.cptk')
             print('saved')
             print('average return: ',round_down(score/save_frequency),'%')
-            print(score-vench)
             score = 0
             vench = 0
 
 '''
+import pandas as pd
+k200price = pd.read_csv("d:/kospi200price.csv")
+k200 = k200price[['종가']].to_numpy(dtype=np.float32)
+k200 = k200[1:-1]
+k200 = k200[::-1]
+v_array = np.array(value_list,dtype=np.float32)
 plt.plot(v_array/v_array[0],label='agent')
 plt.plot(k200/k200[0],label='ks200')
 plt.xlabel("Time Period")

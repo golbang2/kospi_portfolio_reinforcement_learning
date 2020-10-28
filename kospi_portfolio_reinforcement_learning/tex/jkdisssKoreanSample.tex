@@ -27,10 +27,10 @@
 
 \author{
 김태윤\footnote{(61186) 광주광역시 북구 용봉로 77 자연대 1호관 238, 전남대학교 통계학과, 석사과정. E-mail: 196350@jnu.ac.kr} $\cdot$
-고봉균\footnote{(61186) 광주광역시 북구 용봉로 77 자연대 1호관 , 전남대학교 경영학부, 교수. \\ E-mail: nadozzzzz@choizzz.ac.kr} 
+고봉균\footnote{(61186) 광주광역시 북구 용봉로 77 자연대 1호관 , 전남대학교 통계학과, 교수. \\ E-mail: } 
 }
 \address{
-${}^{1}${전남대학교 통계학과} $\cdot$ ${}^{2}${전남대학교 통계학}
+${}^{1}${전남대학교 통계학과} $\cdot$ ${}^{2}${전남대학교 통계학과}
 }
 
 \accepted
@@ -42,10 +42,31 @@ ${}^{1}${전남대학교 통계학과} $\cdot$ ${}^{2}${전남대학교 통계�
 \end{keywords}
 
 \section{서론}
-내용이 여기에 옮.
+강화 학습은 에이전트가 환경과 상호작용하며 시행 착오를 통해 최적의 의사결정을 학습하는 기계학습 알고리즘이다(Sutton \& Barto, 2018). 강화학습은 지난 10년간 비디오 게임(Mnih et al., 2013; Mnih et al., 2015), 보드게임(Bard et al., 2020; Silver et al., 2016), 로봇 제어(Lillicrap et al., 2015) 등에서 큰 성과를 거두었고 이에 따라 현재 활발한 연구가 진행 중이다. 그러나 금융분야에서 강화학습은 큰 성과를 보여주지 못하고 있다(Yu, Lee, Kulyatin, Shi, \& Dasgupta, 2019).
+ 
+금융 분야에서 포트폴리오 최적화는 오랜 기간동안 해결하지 못한 주된 과제였다(Markowitz, 1959). 금융 투자에서 투자자산 분산을 통해 포트폴리오를 구성하고 비체계적 위험을 축소하면서 수익을 극대화할 수 있다. 지금까지 포트폴리오 이론들은 주로 계량경제학적인 방법으로 접근했고(Blume, 1970; Elton \& Gruber, 1997) 이런 방법에는 투자 자산들의 기대수익률과 변동성, 투자 자산간의 상관계수 등의 추정치를 핵심적인 파라미터로 써야 하고 이런 추정치를 입력하는 것에 대한 문제점도 지적되어 왔다(Bawa, Brown, \& Klein, 1979; Jobson \& Korkie, 1981; Michaud, 1989).
 
-\section{FRACAS 개요}
-내용이 여기에 옮.
+그에 따라 금융 분야에 강화 학습을 적용시키기 위한 연구가 이루어졌으며(Cumming, Alrajeh, \& Dickens, 2015; Dempster \& Leemans, 2006; Deng, Bao, Kong, Ren, \& Dai, 2016), 강화학습을 이용해 포트폴리오를 관리하기 위한 연구 또한 이루어졌다(Guo, Fu, Shi, \& Liu, 2018; Jiang, Xu, \& Liang, 2017; Kim, Heo, Lim, Kwon, \& Han, 2019; Yu et al., 2019). 이런 연구들에서 이루어진 방법들은 주로 총 수익률에 따라 강화학습을 수행하는 에이전트에 보상을 줌으로써 피드백이 이루어지는 것이다. 
+
+하지만 위의 연구들은 주로 거래량이 많은 암호화폐, 외환, 파생상품 등을 거래함으로써 소수점거래의 제한을 받지 않았고 종목선택이 자의적으로 이루어졌다(Dempster \& Leemans, 2006; Deng et al., 2016; Jiang et al., 2017; Kim et al., 2019). 하지만 한국 주식시장에서는 종목선택의 문제가 있고 소수점거래가 제한적이며 이에 따라 새로운 강화학습 방법을 적용할 필요가 있다.
+
+Deep Q-learning(Mnih et al., 2013; Mnih et al., 2015), Double Deep Q-learning(Van Hasselt, Guez, \& Silver, 2015), Dueling Deep Q-leaning(Wang et al., 2016)과 같은 가치 기반 방법들은 가중치와 같은 연속형 행동을 취할 수 없고 특정 상태에서 취할 수 있는 개별적인 행동에 대한 가치를 정확히 추정하는데 목표를 둔다.
+
+반면 정책 기반 방법들은(Schulman, Levine, Abbeel, Jordan, \& Moritz, 2015; Schulman, Wolski, Dhariwal, Radford, \& Klimov, 2017; Silver et al., 2014) 보상을 극대화시키는 것을 목표로 정책을 최적화시키는 알고리즘이다. 정책 기반 방법은 연속형이나 확률분포형으로 행동을 취할 수 있어 로봇제어, 비디오 게임 등에 적합하다.
+
+본 연구에서는 대상 주식을 선정하는 것에 컨볼루션 신경망을 사용하는 selector 네트워크를 사용하며, selector 네트워크를 통해 선정된 주식을 적절한 비율로 배분하는 것에 정책기반 강화학습 allocator 네트워크를 사용한다.
+
+
+\section{관련 연구}
+포트폴리오 최적화를 위해 강화학습을 이용한 연구로 컨볼루션 신경망과 순환신경망을 이용해 3차원 가격 데이터를 이용하는 Ensemble of Identical Independent Evaluators와 이전 가중치에 대한 메모리를 저장하여 가중치를 구할 때 이용하는 Portfolio Vector Memory 그리고 시계열 자료에 적절한 배치 학습을 적용하기 위한 Online Stochastic Batch Learning을 이용해 암호화폐로 구성된 포트폴리오를 최적화하는 연구가 있었다(Jiang et al., 2017). 또한 가격 예측을 위한 강화학습 모듈 Infused Prediction Module, 모델 기반 강화학습을 위해 필요한 확률분포를 생성적 적대 신경망을 이용해 생성하는 Data Augmentation Module, 투자자들의 선호를 모방해 포트폴리오의 변동성을 감소시키기 위한 Behavior Cloning Module을 도입해 모델 기반 강화학습을 구현한 연구가 있었다.(Yu et al., 2019)
+
+암호화폐의 포트폴리오 구성에서 a3c를 이용해 에이전트의 강화 학습을 멀티쓰레드로 구성해 학습속도를 향상 시킬 수 있다는 것이 확인 되었다(Kim et al., 2019).
+
+Recurrent Reinforcement Learning을 이용함으로써 동적 포트폴리오 구성으로 기대 Maximum Drawdown값을 최소화시켜 위험을 관리해 헤지펀드의 벤치마크를 상회할 수 있다는 것이 확인되었다(Almahdi & Yang, 2017).
+
+\section{환경 설정}
+
+
 
 \begin{table}[!ht]
 \label{tbl:data}
