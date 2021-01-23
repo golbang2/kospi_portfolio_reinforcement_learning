@@ -24,86 +24,102 @@ def MM_scaler(s):
         x[i]=(s[i]-np.min(s[i],axis=0))/((np.max(s[i],axis=0)-np.min(s[i],axis=0))+1e-5)
     return x
 
-def round_down(x):
-    return round((x-1)*100,4)
-    
 
 #preprocessed data loading
 is_train = 1
 
 #hyperparameters
-learning_rate = 3e-5
-memory_size = 20
 input_day_size = 50
 filter_size = 3
 num_of_feature = 4
-num_of_asset = 10
-num_episodes = 2000 if is_train ==1 else 1
+num_of_asset = 8
+num_episodes = 10000 if is_train ==1 else 1
 money = 1e+8
 
 #saving
 save_frequency = 100
-save_path = './algorithms'
+save_path = './weights'
 save_model = 1
 load_model = 1
+selecting_random = True
 if is_train==0:
-    env = environment.env(train = 0)
+    env = environment.env(train = 0,number_of_asset = num_of_asset)
     load_model = 1
+    selecting_random = False
 else:
-    env = environment.env()
+    env = environment.env(number_of_asset = num_of_asset)
 
 config = tf.ConfigProto(allow_soft_placement=True, log_device_placement=True)
 config.gpu_options.allow_growth = True
 
-with tf.Session(config=config) as sess:
-    allocator=network.policy(sess)
+a_loss_sum = 0
+s_loss_sum = 0
+
+sess = tf.Session(config = config)
+
+with tf.variable_scope('ESM'):
     selector = network.select_network(sess)
-    sess.run(tf.global_variables_initializer())
+with tf.variable_scope('AAM'):
+    allocator=network.policy(sess,num_of_asset = num_of_asset)
+
+sess.run(tf.global_variables_initializer())
     
-    if save_model:
-        saver = tf.train.Saver(max_to_keep=100)
-        ckpt = tf.train.get_checkpoint_state(save_path)
-        if load_model:
-            saver.restore(sess,ckpt.model_checkpoint_path)
-    score = 0
-    vench = 0
+
+saver_ESM = tf.train.Saver(var_list = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 'ESM'))
+saver_AAM = tf.train.Saver(var_list = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, 'AAM'))
+ckpt_ESM = tf.train.get_checkpoint_state(save_path+'ESM')
+ckpt_AAM = tf.train.get_checkpoint_state(save_path+'AAM')
+if load_model:
+    saver_ESM.restore(sess,ckpt_ESM.model_checkpoint_path)
+    saver_AAM.restore(sess,ckpt_AAM.model_checkpoint_path)
+        
+score = 0
+bench = 0
+for i in range(num_episodes):
+    allocator_memory = deque()
+    selector_memory = deque()
+    s=env.start()
+    s=MM_scaler(s)
+    done=False
+    v=money
+    weight_memory = []
     value_list = []
-    for i in range(num_episodes):
-        allocator_memory = deque()
-        selector_memory = deque()
-        s,m=env.start()
-        s=MM_scaler(s)
-        done=False
-        v=money
-        weight_memory = []
-        while not done:
-            evaluated_value= selector.predict(s,m)
-            selected_s,selected_m = env.selecting(evaluated_value)
-            selected_s = MM_scaler(selected_s)
-            w= allocator.predict(selected_s,selected_m)
-            s_prime,r,done,v_prime,growth,m_prime = env.action(w)
-            s_prime=MM_scaler(s_prime)
-            allocator_memory.append([selected_s,r,selected_m,np.repeat(((v_prime/v-1)*100),10)])
-            selector_memory.append([s,(growth*10),m])
-            weight_memory.append(w)
-            s = s_prime
-            v = v_prime
-            m = m_prime
-            value_list.append(v)
-            if done:
-                score+=v/money
-                print(i,'agent:',round(v/money,4), 'acc: ',round((env.acc[0,0]+env.acc[1,2])/(np.sum(env.acc)-11452),4))
-                if is_train ==1:
-                    allocator.update(allocator_memory)
-                    selector.update(selector_memory)
-
-        if save_model == 1 and i % save_frequency == save_frequency - 1:
-            saver.save(sess,save_path+'/model-'+str(i)+'.cptk')
-            print('saved')
-            print('average return: ',round_down(score/save_frequency),'%')
-            score = 0
-            vench = 0
-
+    while not done:
+        evaluated_value = selector.predict(s)
+        selected_s = env.selecting(evaluated_value,rand=selecting_random)
+        selected_s = MM_scaler(selected_s)
+        w = allocator.predict(selected_s)
+        s_prime,r,done,v_prime,growth = env.action(w)
+        s_prime=MM_scaler(s_prime)
+        allocator_memory.append([selected_s,r])
+        selector_memory.append([s,growth])
+        weight_memory.append(w)
+        s = s_prime
+        v = v_prime
+        value_list.append(v)
+        if done:
+            score+=v/money
+            if is_train ==1:
+                a_loss = allocator.update(allocator_memory)
+                s_loss = selector.update(selector_memory)
+                s_loss_sum += s_loss
+                print(i,'agent:',round(v/money,4), 'benchmark:',round(env.benchmark/money,4))
+                a_loss_sum += a_loss
+            else:
+                print(i,'agent:',round(v/money,4), 'benchmark:',round(env.benchmark/money,4))#, 'acc: ',round((env.acc[0,0]+env.acc[1,2])/(np.sum(env.acc)-np.sum(env.acc[:,1])),4))
+               
+    if save_model == 1 and i % save_frequency == save_frequency - 1:
+        saver_ESM.save(sess,save_path+'ESM/ESM-'+str(i)+'.cptk')
+        print('ESM loss:', s_loss_sum)
+        s_loss_sum = 0
+        saver_AAM.save(sess,save_path+'AAM/AAM-'+str(i)+'.cptk')
+        print('average return: ',(round(score/save_frequency,4)-1)*100,'%')
+        print('AAM loss:', a_loss_sum)
+        print('saved')
+        score = 0
+        bench = 0
+        a_loss_sum = 0
+        
 '''
 import pandas as pd
 k200price = pd.read_csv("d:/kospi200price.csv")
@@ -117,4 +133,4 @@ plt.xlabel("Time Period")
 plt.ylabel("value")
 plt.legend()
 plt.show()
-'''
+''' 

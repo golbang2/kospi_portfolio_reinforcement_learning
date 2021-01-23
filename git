@@ -1,0 +1,293 @@
+[33mcommit 58302c63218553256163d8f00ed8c67c38414b90[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31mKOSPI_portfolio_RL/master[m[33m)[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Wed Jan 13 03:06:25 2021 +0900
+
+    4.4f tex
+
+[33mcommit 306eec51962d41ca8505929c9236bdc1f9166cbb[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Sat Jan 9 19:09:02 2021 +0900
+
+    tex
+
+[33mcommit a8319a82a1e4e98011c0ffcd251f476e9647e025[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Sat Jan 9 15:01:03 2021 +0900
+
+    tex
+
+[33mcommit e3de369813aa514fc9fa07b8a6afaa67e7aa9ace[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Fri Jan 8 21:37:28 2021 +0900
+
+    4.4
+
+[33mcommit f8fc5ccf5984682200bdc4d47ad993246a2b87ec[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Fri Jan 8 00:29:49 2021 +0900
+
+    4.4f
+
+[33mcommit 5d72a2259a8d2173f5830ab864959c30cedeabe6[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Wed Jan 6 20:24:06 2021 +0900
+
+    4.4
+
+[33mcommit d6b60e13410a16d12964a92e338abf8d9885ae80[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Mon Jan 4 23:59:43 2021 +0900
+
+    add weight
+
+[33mcommit 98dbd2cde5de51df489b61505b11fe14ef385d1a[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Mon Jan 4 23:53:24 2021 +0900
+
+    add weight
+
+[33mcommit 4cacdc3eec24f06b8d4c1c4bd7a9f14d89851d9f[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Mon Jan 4 23:51:18 2021 +0900
+
+    4.3
+    
+    revision
+
+[33mcommit 6cbfa6157d4bba07d78fb183ed66015d9518a95d[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Thu Dec 17 20:20:05 2020 +0900
+
+    add index data
+
+[33mcommit f13aa7a1ceae72ea66f7ff12daf1443264e77571[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Tue Dec 15 17:08:22 2020 +0900
+
+    add preprint
+
+[33mcommit 79647cdbc358b4d6b06c97c188c1a817424e3b8c[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Mon Dec 14 03:30:26 2020 +0900
+
+    delete log
+
+[33mcommit cdd8fe8cbace8c2359472dc56b5a411829d0e7fd[m
+Author: golbang2 <atgolbang2@gmail.com>
+Date:   Mon Dec 14 03:27:19 2020 +0900
+
+    v4.4
+
+[33mcommit e3ddcb9b38019b850bf67ce32442a415856986c6[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Tue Nov 17 19:38:01 2020 +0900
+
+    v4.2
+
+[33mcommit f04fc057c7a717b77382c47870537200c72556f3[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Tue Nov 10 19:06:40 2020 +0900
+
+    v4
+
+[33mcommit 3aaece6abbbd08231f3976f12c9fb17684ce2cf3[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Fri Nov 6 17:49:54 2020 +0900
+
+    v4
+    
+    deleted memory
+    ESM's convolution->LSTM
+
+[33mcommit 1a98270ed90b81393c52dd82f0962c31c81ef531[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Fri Nov 6 13:31:03 2020 +0900
+
+    정리
+
+[33mcommit ef86f69d3ab3c820e30a54c50268f6d71f1104b4[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Fri Nov 6 10:18:09 2020 +0900
+
+    3.4
+
+[33mcommit d19482af7a162967c8a0a175bcb77560193eb1a3[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Tue Nov 3 14:44:44 2020 +0900
+
+    v3.3
+
+[33mcommit f518a31a706132e17de54d588097462b48d34529[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Oct 28 11:49:15 2020 +0900
+
+    4.0
+    
+    value memory
+
+[33mcommit 495984ffd83526439d1e13a4536ef9a2ab9ef096[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Oct 14 14:27:13 2020 +0900
+
+    tex
+
+[33mcommit b68b0d0b501e7b0f347924ba352877481f18a4d7[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Oct 14 12:07:18 2020 +0900
+
+    Revert "Update 논문임시.docx"
+    
+    This reverts commit 0af89e108dcb65dc5f7095cabb5faf589c9b3998.
+
+[33mcommit 0af89e108dcb65dc5f7095cabb5faf589c9b3998[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Oct 14 10:11:32 2020 +0900
+
+    Update 논문임시.docx
+
+[33mcommit c4285ecfd3c5319ba9653a13db5912259a0c78fe[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Oct 14 07:58:35 2020 +0900
+
+    ppt
+
+[33mcommit 2c458de9858d233a647126743a9006b827561ea6[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Tue Oct 13 00:01:15 2020 +0900
+
+    Update 포트폴리오 강화학습.pptx
+
+[33mcommit 483f49d52dcbd29a6b2598bd44306317bdb01c2a[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Tue Oct 13 00:00:38 2020 +0900
+
+    v3.1
+
+[33mcommit f19ef1ebeb1e14a18c1a6fa23342e3c14c48bf1a[m
+Merge: c2ad8e3 6307f62
+Author: golbang2 <karigan05@naver.com>
+Date:   Fri Oct 9 03:23:55 2020 +0900
+
+    Merge branch 'master' of https://github.com/golbang2/kospi_portfolio_reinforcment_learning
+
+[33mcommit c2ad8e3e532aa9c93c7868e1cf75d510353d3cec[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Fri Oct 9 03:22:55 2020 +0900
+
+    v3
+
+[33mcommit 6307f623b782c79e9827abef49adbe4daa9cea0e[m
+Author: golbang2 <32033086+golbang2@users.noreply.github.com>
+Date:   Tue Sep 29 05:03:47 2020 +0900
+
+    Create paper.md
+
+[33mcommit 4348b2590d146fbe25ff0b39cb01fdc37c4f388b[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Tue Sep 29 04:38:13 2020 +0900
+
+    v2
+
+[33mcommit 0bb37fd7a6aac8f3961531eaba207c66a2a697f9[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Thu Sep 3 00:19:23 2020 +0900
+
+    1.1
+
+[33mcommit 32edc6449407ec819f43c754bda30214574c19b3[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Thu Sep 3 00:13:25 2020 +0900
+
+    back1.0
+
+[33mcommit 822c11ddbc93704ef13561e08e7d85ded9bf1e3e[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Sep 2 23:49:24 2020 +0900
+
+    Update main.py
+
+[33mcommit b7432a85cf748373eeb24fcf250c10b832e8d0f1[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Sep 2 23:48:32 2020 +0900
+
+    Update main.py
+
+[33mcommit 65826597857d4015e1273c8496cb3c3f8fcb7995[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Sep 2 23:43:29 2020 +0900
+
+    Revert "v1.1"
+    
+    This reverts commit dbf891732659559f69ad69d605cfd9ff47a2e7db.
+
+[33mcommit dbf891732659559f69ad69d605cfd9ff47a2e7db[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Sep 2 23:41:40 2020 +0900
+
+    v1.1
+
+[33mcommit c8dd6ed95f29508c44316cf67457ffa334fff308[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Sep 2 15:36:43 2020 +0900
+
+    1.1
+
+[33mcommit ef817be7f7bc5b9c7a1bab3e40a7e275e7d1628e[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Tue Sep 1 04:03:10 2020 +0900
+
+    test
+
+[33mcommit 9dab6b00472dc0705b9b66d657b591aa1152d0c8[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Mon Aug 31 19:46:04 2020 +0900
+
+    v1
+
+[33mcommit 89389e41beb71eb9f7872d6d60a332432b95d5a6[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Mon Aug 31 19:44:46 2020 +0900
+
+    v1
+
+[33mcommit 2b67494feb837ba2f992decd501609e0b2e771d3[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Thu Aug 27 21:23:09 2020 +0900
+
+    v1
+
+[33mcommit 318135d6d8422bb357b5cc524116b61048d57e31[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Thu Aug 27 01:45:26 2020 +0900
+
+    home3
+
+[33mcommit 9fbda926ac4804de65afa0f3d6df55985f6fb638[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Wed Aug 26 01:34:46 2020 +0900
+
+    home2
+
+[33mcommit b905ff77a97e2acb65feb155ae8f6c0eb3ab5b6f[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Tue Aug 25 15:34:39 2020 +0900
+
+    school2
+
+[33mcommit 21fa0f90117d5a17352d70de3ebcbd07a543f663[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Mon Aug 24 18:45:06 2020 +0900
+
+    Create get_kospi200_list.py
+
+[33mcommit aa615219dc960b23f4092660042b31a901a06e8d[m
+Author: golbang2 <karigan05@naver.com>
+Date:   Mon Aug 24 16:27:00 2020 +0900
+
+    school1
+
+[33mcommit 93cb8f0fc1216cd3a8433ec37310ba74bc7d432f[m
+Author: golbang2 <32033086+golbang2@users.noreply.github.com>
+Date:   Mon Aug 24 01:46:11 2020 +0900
+
+    Add files via upload
